@@ -1,4 +1,6 @@
-from typing import Tuple, Set, Iterator, List
+from __future__ import annotations
+
+from typing import Iterator
 
 
 class Flood:
@@ -12,13 +14,13 @@ class Flood:
 
 
 class FloodIter:
-    iterator: Iterator[Tuple[int, int]]
+    iterator: Iterator[tuple[int, int]]
 
     def __init__(self, flood_info: Flood):
         self.flood_info = flood_info
-        self.visited_places: Set[Tuple[int, int]] = set()
-        self.routes: Set[Tuple[int, int]] = set()
-        self.asking_routes: Set[Tuple[int, int]] = set()
+        self.visited_places: set[tuple[int, int]] = set()
+        self.routes: set[tuple[int, int]] = set()
+        self.asking_routes: set[tuple[int, int]] = set()
         self.possible_movement = PossibleMovement()
         self.first_time: bool = True
         self.iterator = iterator((self.flood_info.start_x, self.flood_info.start_y), self.possible_movement,
@@ -32,7 +34,7 @@ class FloodIter:
     def __iter__(self) -> "FloodIter":
         return self.start()
 
-    def __next__(self) -> Tuple[int, int, "PossibleMovement"]:
+    def __next__(self) -> tuple[int, int, "PossibleMovement"]:
         if self.first_time:
             self.first_time = False
             return self.flood_info.start_x, self.flood_info.start_y, self.possible_movement
@@ -45,61 +47,24 @@ class PossibleMovement:
         self.up = False
         self.right = False
         self.down = False
-        
-        self.left_teleport: Tuple[int, int] = (-1, -1)
-        self.up_teleport: Tuple[int, int] = (-1, -1)
-        self.right_teleport: Tuple[int, int] = (-1, -1)
-        self.down_teleport: Tuple[int, int] = (-1, -1)
+    
+    @staticmethod
+    def _move_pos(pos: tuple[int, int], movement: tuple[int, int]) -> tuple[int, int]:
+        return pos[0] + movement[0], pos[1] + movement[1]
 
-    def get_movement(self, pos: Tuple[int, int]):
-        raw = self.raw_movement(pos)
-        ret: Set[Tuple[int, int]] = set()
+    def get_movement(self, pos: tuple[int, int]) -> set[tuple[int, int]]:
+        change: set[tuple[int, int]] = set()
 
         if self.left:
-            ret.add(raw[0])
-
+            change.add((-1, 0))
         if self.up:
-            ret.add(raw[1])
-
+            change.add((0, -1))
         if self.right:
-            ret.add(raw[2])
-
+            change.add((1, 0))
         if self.down:
-            ret.add(raw[3])
-        return ret
-    
-    def raw_movement(self, pos: Tuple[int, int], reset: bool = True):
-        _pos = pos
-        ret: List[Tuple[int, int]] = []
-        
-        if self.left_teleport != (-1, -1):
-            pos = self.left_teleport
-            if reset:
-                self.left_teleport = (-1, -1)
-        ret.append((pos[0] - 1, pos[1]))
-        pos = _pos
+            change.add((0, 1))
 
-        if self.up_teleport != (-1, -1):
-            pos = self.up_teleport
-            if reset:
-                self.up_teleport = (-1, -1)
-        ret.append((pos[0], pos[1] - 1))
-        pos = _pos
-
-        if self.right_teleport != (-1, -1):
-            pos = self.right_teleport
-            if reset:
-                self.right_teleport = (-1, -1)
-        ret.append((pos[0] + 1, pos[1]))
-        pos = _pos
-
-        if self.down_teleport != (-1, -1):
-            pos = self.down_teleport
-            if reset:
-                self.down_teleport = (-1, -1)
-        ret.append((pos[0], pos[1] + 1))
-        
-        return ret
+        return {self._move_pos(pos, movement) for movement in change}
     
     def all_true(self):
         self.left = True
@@ -114,11 +79,11 @@ class PossibleMovement:
         self.down = False
 
 
-def iterator(start_pos: Tuple[int, int], is_correct: PossibleMovement, max_depth: int) -> Iterator[Tuple[int, int]]:
-    routes: Set[Tuple[int, int]] = set()
-    visited: Set[Tuple[int, int]] = set()
+def iterator(start_pos: tuple[int, int], is_correct: PossibleMovement, max_depth: int) -> Iterator[tuple[int, int]]:
+    routes: set[tuple[int, int]] = set()
+    visited: set[tuple[int, int]] = set()
 
-    def get_correct_spread(check_pos: Tuple[int, int]) -> Set[Tuple[int, int]]:
+    def get_correct_spread(check_pos: tuple[int, int]) -> set[tuple[int, int]]:
         return is_correct.get_movement(check_pos).difference(visited)
 
     routes.update(get_correct_spread(start_pos))

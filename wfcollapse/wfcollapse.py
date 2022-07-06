@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from .board import Board2d
+from .board import Board2d, BoardTile
+from .superposition_tile import SuperpositionTile
 
 
 class WFCAbstract(ABC):
@@ -15,11 +16,9 @@ class WFCAbstract(ABC):
         pass
 
     @abstractmethod
-    def select_superposition(self, tile):
+    def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
         """
         Select superposition of tile.
-        :param tile:
-        :return:
         """
         pass
 
@@ -28,4 +27,3 @@ class WFCollapse:
     """
     "WFCollapse" is Wave Function Collapse class that intends to implement wave function collapse algorithm.
     """
-

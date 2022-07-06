@@ -15,3 +15,6 @@ class SuperpositionTile:
     @property
     def unsolvable(self):
         return len(self.superpositions) == 0
+
+
+__all__ = ["SuperpositionTile"]

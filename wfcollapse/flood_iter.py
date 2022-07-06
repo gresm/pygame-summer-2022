@@ -24,7 +24,7 @@ class FloodIter:
 
     @staticmethod
     def _box_limiter_inside(x: int, y: int, start_x: int, start_y: int, max_x: int, max_y: int) -> bool:
-        return start_x <= x < max_x and start_y <= y < max_y
+        return start_x < x < max_x and start_y < y < max_y
 
     @classmethod
     def box_limiter(
@@ -97,19 +97,21 @@ def iterator(start_pos: tuple[int, int], is_correct: PossibleMovement, max_depth
     def get_correct_spread(check_pos: tuple[int, int]) -> set[tuple[int, int]]:
         return is_correct.get_movement(check_pos).difference(visited)
 
-    routes.update(get_correct_spread(start_pos))
+    routes.update({start_pos})
     cnt = 0
 
     while len(routes):
+        print(routes)
         if cnt >= max_depth != -1:
             break
         new_routes = set()
         old_routes = set()
         for rout in routes:
-            visited.add(rout)
-            new_routes.update(get_correct_spread(rout))
-            old_routes.add(rout)
             yield rout
+            visited.add(rout)
+            cs = get_correct_spread(rout)
+            new_routes.update(cs)
+            old_routes.add(rout)
         cnt += 1
 
         routes.update(new_routes)

@@ -18,11 +18,7 @@ class FloodIter:
 
     def __init__(self, flood_info: Flood):
         self.flood_info = flood_info
-        self.visited_places: set[tuple[int, int]] = set()
-        self.routes: set[tuple[int, int]] = set()
-        self.asking_routes: set[tuple[int, int]] = set()
         self.possible_movement = PossibleMovement()
-        self.first_time: bool = True
         self.iterator = iterator((self.flood_info.start_x, self.flood_info.start_y), self.possible_movement,
                                  self.flood_info.max_iterations)
 
@@ -35,9 +31,6 @@ class FloodIter:
         return self.start()
 
     def __next__(self) -> tuple[int, int, "PossibleMovement"]:
-        if self.first_time:
-            self.first_time = False
-            return self.flood_info.start_x, self.flood_info.start_y, self.possible_movement
         return next(self.iterator) + (self.possible_movement, )
 
 
@@ -90,7 +83,7 @@ def iterator(start_pos: tuple[int, int], is_correct: PossibleMovement, max_depth
     cnt = 0
 
     while len(routes):
-        if cnt >= max_depth:
+        if cnt >= max_depth != -1:
             break
         new_routes = set()
         old_routes = set()
@@ -103,3 +96,6 @@ def iterator(start_pos: tuple[int, int], is_correct: PossibleMovement, max_depth
 
         routes.update(new_routes)
         routes.difference_update(old_routes)
+
+
+__all__ = ["Flood", "FloodIter", "PossibleMovement", "iterator"]

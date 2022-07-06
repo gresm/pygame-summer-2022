@@ -11,19 +11,37 @@ class WFCAbstract(ABC):
     """
     def __init__(self, board: Board2d[SuperpositionTile]):
         self.board = board
-        self.least_entropy_tiles: set[BoardTile[SuperpositionTile]] = SuperpositionTile.least_entropy_tiles(board)
 
     @abstractmethod
-    def step(self):
+    def solve_tile(self, tile: BoardTile[SuperpositionTile]):
         """
-        Perform one step of wave-function collapse.
+        Reduce superpositions of the tile, if all superpositions reduced to 1, return True, else False.
         """
         pass
 
     @abstractmethod
     def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
         """
-        Select superposition of tile.
+        Collapse a tile to one superposition.
+        """
+        pass
+
+    @abstractmethod
+    def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]):
+        """
+        Select a tile to collapse.
+        """
+        pass
+
+    def find_tile_to_collapse(self):
+        """
+        Select a tile to collapse.
+        """
+        return self.select_tile_to_collapse(SuperpositionTile.least_entropy_tiles(self.board))
+
+    def step(self):
+        """
+        Perform one step of wave-function collapse.
         """
         pass
 

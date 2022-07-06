@@ -42,8 +42,8 @@ class FloodIter:
     def __iter__(self) -> "FloodIter":
         return self.start()
 
-    def __next__(self) -> tuple[int, int, "PossibleMovement"]:
-        return next(self.iterator) + (self.possible_movement, )
+    def __next__(self) -> tuple[tuple[int, int], "PossibleMovement"]:
+        return next(self.iterator), self.possible_movement
 
 
 class PossibleMovement:
@@ -83,7 +83,7 @@ class PossibleMovement:
         self.right = False
         self.down = False
 
-    def discriminate(self, left: bool, up: bool, right: bool, down: bool):
+    def eliminate_directions(self, left: bool, up: bool, right: bool, down: bool):
         self.left = left and self.left
         self.up = up and self.up
         self.right = right and self.right

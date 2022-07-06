@@ -10,7 +10,7 @@ if __name__ != '__main__':
 def draw_board(board: list[list[int]]):
     for line in board:
         for el in line:
-            print('x' if el else ' ', end='')
+            print('x' if el else '.', end='')
         print()
 
 
@@ -20,15 +20,20 @@ def test_iter():
     flood_settings = Flood(4, 4, -1)
     flood = FloodIter(flood_settings)
     board = [[False for _ in range(10)] for _ in range(10)]
+    sleep = 0.05
+
+    os.system('clear')
+    draw_board(board)
+    time.sleep(sleep)
 
     for pos, move in flood:
-        draw_board(board)
-        time.sleep(0.1)
-        os.system('clear')
         move.all_true()
-        move.eliminate_directions(*flood.box_limiter(pos, 0, 0, 9, 9))
-        print(pos)
+        move.eliminate_directions(*flood.box_limiter(pos, 0, 0, 10, 10))
         board[pos[0]][pos[1]] = True
+
+        os.system('clear')
+        draw_board(board)
+        time.sleep(sleep)
 
 
 test_iter()

@@ -22,6 +22,18 @@ class FloodIter:
         self.iterator = iterator((self.flood_info.start_x, self.flood_info.start_y), self.possible_movement,
                                  self.flood_info.max_iterations)
 
+    @staticmethod
+    def _box_limiter_inside(x: int, y: int, start_x: int, start_y: int, max_x: int, max_y: int) -> bool:
+        return start_x <= x < max_x and start_y <= y < max_y
+
+    @classmethod
+    def box_limiter(
+            cls, pos: tuple[int, int], start_x: int, start_y: int, max_x: int, max_y: int
+    ) -> tuple[bool, bool, bool, bool]:
+        def c(x, y): return cls._box_limiter_inside(x, y, start_x, start_y, max_x, max_y)
+
+        return c(pos[0] - 1, pos[1]), c(pos[0] + 1, pos[1]), c(pos[0], pos[1] - 1), c(pos[0], pos[1] + 1)
+
     def start(self):
         self.iterator = iterator((self.flood_info.start_x, self.flood_info.start_y), self.possible_movement,
                                  self.flood_info.max_iterations)
@@ -62,14 +74,20 @@ class PossibleMovement:
     def all_true(self):
         self.left = True
         self.up = True
-        self.up = True
+        self.right = True
         self.down = True
-    
+
     def all_false(self):
         self.left = False
         self.up = False
-        self.up = False
+        self.right = False
         self.down = False
+
+    def discriminate(self, left: bool, up: bool, right: bool, down: bool):
+        self.left = left and self.left
+        self.up = up and self.up
+        self.right = right and self.right
+        self.down = down and self.down
 
 
 def iterator(start_pos: tuple[int, int], is_correct: PossibleMovement, max_depth: int) -> Iterator[tuple[int, int]]:

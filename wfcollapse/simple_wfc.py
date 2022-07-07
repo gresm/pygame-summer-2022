@@ -36,7 +36,8 @@ class SimpleCollapse(WFCAbstract):
         return bool(to_discard)
 
     def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
-        tile.tile.superpositions = {choice(list(tile.tile.superpositions))}
+        if not tile.tile.collapsed:
+            tile.tile.superpositions = {choice(list(tile.tile.superpositions))}
 
     def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]) -> BoardTile[SuperpositionTile]:
         return tiles.pop()

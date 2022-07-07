@@ -18,7 +18,7 @@ def in_color(text: str, foreground, background):
 
 def draw_board(board: list[list[BoardTile[SuperpositionTile]]], states: int, mark: tuple[int, int] | None = None):
     tile_width = (states + 1) // 2
-    colors_list = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255), (128, 128, 128),
+    colors_list = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (255, 0, 255), (0, 255, 255), (128, 128, 128),
                    (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128), (0, 128, 128), (128, 128, 128)]
 
     for x in range(len(board)):
@@ -64,15 +64,13 @@ def frame():
 
 
 def test_simple_wfc():
-    collapse = SimpleCollapse(Board2d(10, 10, SuperpositionTile({0, 1, 2, 3})),
+    collapse = SimpleCollapse(Board2d(40, 40, SuperpositionTile({0, 1, 2, 3})),
                               {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}})
 
-    frame()
-    draw_board(collapse.board.board, 4)
     inc = 0
 
     for step in collapse.solve():
-        board = [[False for _ in range(10)] for _ in range(10)]
+        board = [[False for _ in range(collapse.board.width)] for _ in range(collapse.board.height)]
         for pos in step:
             if not immediate:
                 board[pos[0]][pos[1]] = True

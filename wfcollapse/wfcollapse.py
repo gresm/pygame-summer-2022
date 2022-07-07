@@ -97,6 +97,7 @@ class WFCAbstract(ABC):
         if tile is None:
             return False
 
+        self.solve_tile(tile)
         self.collapse_tile(tile)
         return self.wave_tile(tile)
 

@@ -23,14 +23,14 @@ class FloodIter:
                                  self.flood_info.max_iterations)
 
     @staticmethod
-    def _box_limiter_inside(x: int, y: int, start_x: int, start_y: int, max_x: int, max_y: int) -> bool:
-        return start_x <= x < max_x and start_y <= y < max_y
+    def _box_limiter_inside(x: int, y: int, start_x: int, start_y: int, size_x: int, size_y: int) -> bool:
+        return start_x <= x < start_x + size_x and start_y <= y < start_y + size_y
 
     @classmethod
     def box_limiter(
-            cls, pos: tuple[int, int], start_x: int, start_y: int, max_x: int, max_y: int
+            cls, pos: tuple[int, int], start_x: int, start_y: int, size_x: int, size_y: int
     ) -> tuple[bool, bool, bool, bool]:
-        def c(x, y): return cls._box_limiter_inside(x, y, start_x, start_y, max_x, max_y)
+        def c(x, y): return cls._box_limiter_inside(x, y, start_x, start_y, size_x, size_y)
 
         return c(pos[0] - 1, pos[1]), c(pos[0], pos[1] - 1),  c(pos[0] + 1, pos[1]), c(pos[0], pos[1] + 1),
 

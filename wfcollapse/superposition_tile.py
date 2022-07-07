@@ -17,6 +17,8 @@ class SuperpositionTile:
         least_entropy = -1
         for line in board.board:
             for tile in line:
+                if tile.tile.entropy() == 0:
+                    continue
                 if least_entropy == -1 or least_entropy == tile.tile.entropy():
                     least_entropy = tile.tile.entropy()
                     ret.add(tile)

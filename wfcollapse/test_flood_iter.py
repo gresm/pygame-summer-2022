@@ -33,6 +33,7 @@ def test_iter():
 
         os.system('clear')
         draw_board(board)
+        print(pos)
         time.sleep(sleep)
 
 

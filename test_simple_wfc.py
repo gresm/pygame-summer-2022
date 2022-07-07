@@ -16,32 +16,34 @@ def in_color(text: str, foreground, background):
     return f"{mat}{text}\33[0m"
 
 
-def draw_board(board: list[list[BoardTile[SuperpositionTile]]], mark: tuple[int, int] | None = None):
+def draw_board(board: list[list[BoardTile[SuperpositionTile]]], states: int, mark: tuple[int, int] | None = None):
+    tile_width = (states + 1) // 2
+    colors_list = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (255, 0, 255), (0, 255, 255), (128, 128, 128),
+                   (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128), (0, 128, 128), (128, 128, 128)]
+
     for x in range(len(board)):
-        line = board[x]
-        l1 = ""
-        l2 = ""
-        for y in range(len(line)):
-            el = line[y]
-            lst = list(el.tile.superpositions)
-            lst.sort()
+        str_rows: list[str] = ["" for _ in range(tile_width)]
+        for y in range(len(board[x])):
+            tile = board[x][y]
+            sups = list(tile.tile.superpositions)
+            sups.sort()
+            ind = 0
+            for sup_ind in range(states):
+                colored_text = f'{str(sups[sup_ind]) if len(sups) > sup_ind else "."} '
+                if (x, y) == mark:
+                    colored_text = in_color(colored_text, (0, 0, 0), (255, 255, 255))
+                elif tile.tile.entropy() == 1:
+                    colored_text = in_color(colored_text, (0, 0, 0), colors_list[tile.tile.superpositions.copy().pop()])
+                str_rows[ind] += colored_text
+                ind += 1
+                if ind >= tile_width:
+                    ind = 0
 
-            el_l1 = str(lst[0]) if len(lst) > 0 else '.'
-            el_l1 += str(lst[1]) if len(lst) > 1 else "."
-            el_l2 = str(lst[2]) if len(lst) > 2 else "."
-            el_l2 += str(lst[3]) if len(lst) > 3 else "."
+            for ind in range(len(str_rows)):
+                str_rows[ind] += "  "
 
-            if mark is not None and x == mark[0] and y == mark[1]:
-                el_l1 = in_color(el_l1, (0, 0, 0), (255, 255, 255))
-                el_l2 = in_color(el_l2, (0, 0, 0), (255, 255, 255))
-
-            l1 += el_l1
-            l2 += el_l2
-
-            l1 += " "
-            l2 += " "
-        print(l1)
-        print(l2)
+        for row in str_rows:
+            print(row)
         print()
 
 
@@ -53,6 +55,7 @@ def draw_visits_board(board: list[list[bool]]):
 
 
 sleep = 0.05
+immediate = input("Immediate? (y/n) ").lower().startswith("y")
 
 
 def frame():
@@ -65,22 +68,23 @@ def test_simple_wfc():
                               {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}})
 
     frame()
-    draw_board(collapse.board.board)
+    draw_board(collapse.board.board, 4)
     inc = 0
 
     for step in collapse.solve():
         board = [[False for _ in range(10)] for _ in range(10)]
         for pos in step:
-            board[pos[0]][pos[1]] = True
-            frame()
-            draw_board(collapse.board.board, pos)
-            print("step: ", inc)
-            print("visited: ")
-            draw_visits_board(board)
+            if not immediate:
+                board[pos[0]][pos[1]] = True
+                frame()
+                draw_board(collapse.board.board, 4, pos)
+                print("step: ", inc)
+                print("visited: ")
+                draw_visits_board(board)
         inc += 1
 
     frame()
-    draw_board(collapse.board.board)
+    draw_board(collapse.board.board, 4)
 
 
 test_simple_wfc()

@@ -32,7 +32,38 @@ class FloodIter:
     ) -> tuple[bool, bool, bool, bool]:
         def c(x, y): return cls._box_limiter_inside(x, y, start_x, start_y, size_x, size_y)
 
-        return c(pos[0] - 1, pos[1]), c(pos[0], pos[1] - 1),  c(pos[0] + 1, pos[1]), c(pos[0], pos[1] + 1),
+        return c(pos[0] - 1, pos[1]), c(pos[0], pos[1] - 1), c(pos[0] + 1, pos[1]), c(pos[0], pos[1] + 1)
+
+    @staticmethod
+    def _move_pos(pos: tuple[int, int], movement: tuple[int, int]) -> tuple[int, int]:
+        return pos[0] + movement[0], pos[1] + movement[1]
+
+    @classmethod
+    def cardinal_directions(
+            cls, pos: tuple[int, int]
+    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]]:
+        return cls._move_pos(pos, (-1, 0)), cls._move_pos(pos, (0, -1)), cls._move_pos(pos, (1, 0)), \
+               cls._move_pos(pos, (0, 1))
+
+    @classmethod
+    def move_and(
+            cls, first: tuple[bool, bool, bool, bool], second: tuple[bool, bool, bool, bool]
+    ) -> tuple[bool, bool, bool, bool]:
+        return first[0] and second[0], first[1] and second[1], first[2] and second[2], first[3] and second[3]
+
+    @classmethod
+    def _tile_limiter(cls, pos: tuple[int, int], tile: tuple[int, int]):
+        cardinals = cls.cardinal_directions(pos)
+        return cardinals[0] != tile, cardinals[1] != tile, cardinals[2] != tile, cardinals[3] != tile
+
+    @classmethod
+    def tiles_limiter(cls, pos: tuple[int, int], tiles: set[tuple[int, int]]) -> tuple[bool, bool, bool, bool]:
+        current = (True, True, True, True)
+
+        for tile in tiles:
+            current = cls.move_and(current, cls._tile_limiter(pos, tile))
+
+        return current
 
     def start(self):
         self.iterator = iterator((self.flood_info.start_x, self.flood_info.start_y), self.possible_movement,
@@ -52,24 +83,32 @@ class PossibleMovement:
         self.up = False
         self.right = False
         self.down = False
-    
+
     @staticmethod
     def _move_pos(pos: tuple[int, int], movement: tuple[int, int]) -> tuple[int, int]:
         return pos[0] + movement[0], pos[1] + movement[1]
 
+    @classmethod
+    def cardinal_directions(
+            cls, pos: tuple[int, int]
+    ) -> tuple[tuple[int, int], tuple[int, int], tuple[int, int], tuple[int, int]]:
+        return cls._move_pos(pos, (-1, 0)), cls._move_pos(pos, (0, -1)), cls._move_pos(pos, (1, 0)), \
+               cls._move_pos(pos, (0, 1))
+
     def get_movement(self, pos: tuple[int, int]) -> set[tuple[int, int]]:
         change: set[tuple[int, int]] = set()
+        cardinals = self.cardinal_directions(pos)
 
         if self.left:
-            change.add((-1, 0))
+            change.add(cardinals[0])
         if self.up:
-            change.add((0, -1))
+            change.add(cardinals[1])
         if self.right:
-            change.add((1, 0))
+            change.add(cardinals[2])
         if self.down:
-            change.add((0, 1))
+            change.add(cardinals[3])
 
-        return {self._move_pos(pos, movement) for movement in change}
+        return change
     
     def all_true(self):
         self.left = True

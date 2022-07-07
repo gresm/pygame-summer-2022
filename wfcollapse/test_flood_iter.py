@@ -20,6 +20,7 @@ def test_iter():
     flood_settings = Flood(4, 4, -1)
     flood = FloodIter(flood_settings)
     board = [[False for _ in range(10)] for _ in range(10)]
+    tiles = {(3, 3), (3, 4), (3, 5), (3, 6)}
     sleep = 0.05
 
     os.system('clear')
@@ -28,6 +29,7 @@ def test_iter():
 
     for pos, move in flood:
         move.all_true()
+        move.eliminate_directions(*flood.tiles_limiter(pos, tiles))
         move.eliminate_directions(*flood.box_limiter(pos, 0, 0, 10, 10))
         board[pos[0]][pos[1]] = True
 

@@ -101,7 +101,7 @@ def test_simple_wfc():
 
 def test_complex_wfc():
     collapse = Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2})), CollapseRules.parse(
-        [[[0, 2], [1], [0, 2], [2]], [[1, 0], [1], [1, 0], [1, 0]], [[2, 0], [2, 0], [2, 0], [2]]]))
+        [[[0, 2], [0, 1], [0, 2], [0, 2]], [[1, 0], [1], [1, 0], [1, 0]], [[2, 0], [2, 0], [2, 0], [2]]]))
 
     inc = 0
 

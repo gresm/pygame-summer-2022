@@ -14,18 +14,23 @@ def draw_board(board: list[list[int]]):
         print()
 
 
+sleep = 0.05
+
+
+def frame():
+    time.sleep(sleep)
+    os.system('clear' if os.name == 'posix' else 'cls')
+
+
 # Test the flood_iter module
 def test_iter():
-    print("start")
     flood_settings = Flood(4, 4, -1)
     flood = FloodIter(flood_settings)
     board = [[False for _ in range(10)] for _ in range(10)]
     tiles = {(3, 3), (3, 4), (3, 5), (3, 6)}
-    sleep = 0.05
 
-    os.system('clear')
     draw_board(board)
-    time.sleep(sleep)
+    frame()
 
     for pos, move in flood:
         move.all_true()
@@ -33,10 +38,11 @@ def test_iter():
         move.eliminate_directions(*flood.box_limiter(pos, 0, 0, 10, 10))
         board[pos[0]][pos[1]] = True
 
-        os.system('clear')
         draw_board(board)
         print(pos)
-        time.sleep(sleep)
+        frame()
+
+    draw_board(board)
 
 
 test_iter()

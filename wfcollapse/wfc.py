@@ -55,6 +55,23 @@ class CollapseRules:
                     valid.add(superposition)
         return valid
 
+    def collapse_around(self, tile: BoardTile[SuperpositionTile]) -> set[int]:
+        ret = tile.tile.superpositions
+
+        if tile.tile.collapsed:
+            return ret
+
+        if tile.left:
+            ret = self.collapse(ret, 0, tile.left.tile.superpositions)
+        if tile.right:
+            ret = self.collapse(ret, 2, tile.right.tile.superpositions)
+        if tile.up:
+            ret = self.collapse(ret, 1, tile.up.tile.superpositions)
+        if tile.down:
+            ret = self.collapse(ret, 3, tile.down.tile.superpositions)
+
+        return ret
+
     def get_options(self, superpositions: set[int], orientation: int, tile_type: set[int]) -> list[int]:
         valid = self.collapse(superpositions, orientation, tile_type)
 
@@ -76,10 +93,14 @@ class Collapse(WFCAbstract):
     def calculate_valid_superpositions(self, tile: BoardTile[SuperpositionTile]):
         ret = []
 
-        ret += (self.rules.get_options(tile.tile.superpositions, 0, tile.left.tile.superpositions))
-        ret += (self.rules.get_options(tile.tile.superpositions, 1, tile.up.tile.superpositions))
-        ret += (self.rules.get_options(tile.tile.superpositions, 2, tile.right.tile.superpositions))
-        ret += (self.rules.get_options(tile.tile.superpositions, 3, tile.down.tile.superpositions))
+        if tile.left:
+            ret += (self.rules.get_options(tile.tile.superpositions, 0, tile.left.tile.superpositions))
+        if tile.up:
+            ret += (self.rules.get_options(tile.tile.superpositions, 1, tile.up.tile.superpositions))
+        if tile.right:
+            ret += (self.rules.get_options(tile.tile.superpositions, 2, tile.right.tile.superpositions))
+        if tile.down:
+            ret += (self.rules.get_options(tile.tile.superpositions, 3, tile.down.tile.superpositions))
 
         return ret
 
@@ -89,6 +110,11 @@ class Collapse(WFCAbstract):
 
     def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]) -> BoardTile[SuperpositionTile]:
         return tiles.pop()
+
+    def solve_tile(self, tile: BoardTile[SuperpositionTile]):
+        before = tile.tile.superpositions
+        tile.tile.superpositions = self.rules.collapse_around(tile)
+        return before != tile.tile.superpositions
 
 
 __all__ = ['Collapse']

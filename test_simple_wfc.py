@@ -58,7 +58,7 @@ def draw_visits_board(board: list[list[bool]]):
 
 parser = ArgumentParser()
 parser.add_argument('-w', '--width', type=int, default=10)
-parser.add_argument('-w', '--height', type=int, default=10)
+parser.add_argument('-hg', '--height', type=int, default=10)
 parser.add_argument('-i', '--immediate', action='store_true')
 parser.add_argument('-d', '--delay', type=float, default=0.1)
 parser.add_argument('--complex-test', action='store_true')
@@ -102,7 +102,11 @@ def test_complex_wfc():
     pass
 
 
-if run_complex_test:
-    test_complex_wfc()
-else:
-    test_simple_wfc()
+try:
+    if run_complex_test:
+        test_complex_wfc()
+    else:
+        test_simple_wfc()
+except KeyboardInterrupt:
+    print("Interrupted, exiting...")
+    exit(1)

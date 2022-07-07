@@ -9,6 +9,15 @@ class BoardTile:
     board: "Board2d"
     tile: ...
 
+    def neighbours(self):
+        ret = {self.board.tile_at(self.x + 1, self.y),
+               self.board.tile_at(self.x - 1, self.y),
+               self.board.tile_at(self.x, self.y + 1),
+               self.board.tile_at(self.x, self.y - 1)}
+
+        ret.discard(None)
+        return ret
+
 
 class Board2d:
     """
@@ -39,13 +48,18 @@ class Board2d:
         """
         Set value at position.
         """
-        self.tile_at(x, y).tile = value
+        if self.check_pos(x, y):
+            self.tile_at(x, y).tile = value
 
     def get_at(self, x, y):
-        return self.tile_at(x, y).tile
+        if self.check_pos(x, y):
+            return self.tile_at(x, y).tile
+        return None
 
     def tile_at(self, x, y):
-        return self.board[x][y]
+        if self.check_pos(x, y):
+            return self.board[y][x]
+        return None
 
 
 __all__ = ["Board2d", "BoardTile"]

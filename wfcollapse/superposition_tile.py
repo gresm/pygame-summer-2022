@@ -5,7 +5,7 @@ from __future__ import annotations
 
 
 class SuperpositionTile:
-    def __init__(self, superpositions: set[int]):
+    def __init__(self, superpositions):
         self.superpositions = superpositions.copy()
 
     @staticmethod

@@ -93,6 +93,7 @@ class WFCAbstract(ABC):
         Returns False to stop the algorithm.
         """
         tile = self.find_tile_to_collapse()
+        print(tile)
         if tile is None:
             return False
 

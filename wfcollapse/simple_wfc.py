@@ -13,14 +13,16 @@ class SimpleCollapse(WFCAbstract):
         self.rules: dict[int, set[int]] = {}
 
         for v in rules:
+            if v not in self.rules:
+                self.rules[v] = set()
+
             for v2 in rules[v]:
-                if v not in self.rules:
-                    self.rules[v] = set()
                 if v2 not in self.rules:
                     self.rules[v2] = set()
 
                 self.rules[v].add(v2)
                 self.rules[v2].add(v)
+        print(self.rules)
 
     def solve_tile(self, tile: BoardTile[SuperpositionTile]):
         neighbours = tile.neighbours()

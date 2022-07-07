@@ -42,16 +42,19 @@ def frame():
 
 def test_simple_wfc():
     collapse = SimpleCollapse(Board2d(10, 10, SuperpositionTile({0, 1, 2, 3})),
-                              {0: {2, 3}, 1: {1, 2, 3}, 2: set(), 3: set()})
+                              {0: set(), 1: set(), 2: set(), 3: set()})
 
     frame()
     draw_board(collapse.board.board)
+    inc = 0
 
     for step in collapse.solve():
-        for pos in step:
-            frame()
-            draw_board(collapse.board.board)
-            print(pos)
+        for _ in step:
+            pass
+        frame()
+        draw_board(collapse.board.board)
+        print("step: ", inc)
+        inc += 1
 
     frame()
     draw_board(collapse.board.board)

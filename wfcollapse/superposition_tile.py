@@ -17,7 +17,7 @@ class SuperpositionTile:
         least_entropy = -1
         for line in board.board:
             for tile in line:
-                if tile.tile.entropy() == 0:
+                if tile.tile.collapsed:
                     continue
                 if least_entropy == -1 or least_entropy == tile.tile.entropy():
                     least_entropy = tile.tile.entropy()
@@ -29,11 +29,11 @@ class SuperpositionTile:
 
     @property
     def collapsed(self):
-        return len(self.superpositions) == 1
+        return self.entropy() <= 1
 
     @property
     def unsolvable(self):
-        return len(self.superpositions) == 0
+        return self.entropy() == 0
 
     def entropy(self):
         return len(self.superpositions)

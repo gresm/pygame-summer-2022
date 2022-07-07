@@ -10,13 +10,26 @@ class BoardTile:
     tile: ...
 
     def neighbours(self):
-        ret = {self.board.tile_at(self.x + 1, self.y),
-               self.board.tile_at(self.x - 1, self.y),
-               self.board.tile_at(self.x, self.y + 1),
-               self.board.tile_at(self.x, self.y - 1)}
+        ret = {self.left, self.right, self.up, self.down}
 
         ret.discard(None)
         return ret
+
+    @property
+    def left(self):
+        return self.board.tile_at(self.x - 1, self.y)
+
+    @property
+    def up(self):
+        return self.board.tile_at(self.x, self.y - 1)
+
+    @property
+    def right(self):
+        return self.board.tile_at(self.x + 1, self.y)
+
+    @property
+    def down(self):
+        return self.board.tile_at(self.x, self.y + 1)
 
 
 class Board2d:

@@ -16,6 +16,10 @@ class BoardTile(Generic[_T2]):
     y: int
     tile: _T2
     board: Board2d[_T2]
+    left: BoardTile[_T2] | None
+    right: BoardTile[_T2] | None
+    up: BoardTile[_T2] | None
+    down: BoardTile[_T2] | None
 
     def __init__(self, x: int, y: int, tile: _T2, board: Board2d[_T2]): ...
 

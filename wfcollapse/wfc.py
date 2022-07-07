@@ -37,11 +37,11 @@ class CollapseRules:
         self.chance = chance
 
     @classmethod
-    def parse(cls, rules: list[list[list[int]]]):
+    def parse(cls, rules: list[list[list[int]]], chance: list[int] | None = None):
         rules_dict = {}
         for superposition in range(len(rules)):
             rules_dict[superposition] = TileRules.parse(rules[superposition])
-        return cls(rules_dict)
+        return cls(rules_dict, {i: chance[i] for i in range(len(chance))} if chance else None)
 
     def collapse(self, superpositions: set[int], orientation: int, tile_type: set[int]):
         if not len(tile_type):

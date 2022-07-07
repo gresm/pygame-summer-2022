@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import os
-import sys
 import time
-from turtle import width
 
 from wfcollapse.board import Board2d, BoardTile
 from wfcollapse.superposition_tile import SuperpositionTile
 from wfcollapse.simple_wfc import SimpleCollapse
 from wfcollapse.wfc import Collapse, CollapseRules
+from argparse import ArgumentParser
 
 if __name__ != '__main__':
     raise RuntimeError('This file is not meant to be imported')
@@ -57,21 +56,19 @@ def draw_visits_board(board: list[list[bool]]):
         print()
 
 
-sleep = 0.05
-if len(sys.argv) == 1:
-    immediate = input("Immediate? (y/n) ").lower().startswith("y")
-else:
-    immediate = sys.argv[1].lower().startswith("y")
+parser = ArgumentParser()
+parser.add_argument('-w', '--width', type=int, default=10)
+parser.add_argument('-w', '--height', type=int, default=10)
+parser.add_argument('-i', '--immediate', action='store_true')
+parser.add_argument('-d', '--delay', type=float, default=0.1)
+parser.add_argument('--complex-test', action='store_true')
+args = parser.parse_args()
 
-if len(sys.argv) > 2:
-    width = int(sys.argv[2])
-else:
-    width = 40
-
-if len(sys.argv) > 3:
-    height = int(sys.argv[3])
-else:
-    height = 40
+sleep = args.delay
+immediate = args.immediate
+width = args.width
+height = args.height
+run_complex_test = args.complex_test
 
 
 def frame():
@@ -101,4 +98,11 @@ def test_simple_wfc():
     draw_board(collapse.board.board, 4)
 
 
-test_simple_wfc()
+def test_complex_wfc():
+    pass
+
+
+if run_complex_test:
+    test_complex_wfc()
+else:
+    test_simple_wfc()

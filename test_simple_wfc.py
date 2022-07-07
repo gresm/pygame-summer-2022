@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import sys
 import time
 
 from wfcollapse.board import Board2d, BoardTile
@@ -55,7 +56,10 @@ def draw_visits_board(board: list[list[bool]]):
 
 
 sleep = 0.05
-immediate = input("Immediate? (y/n) ").lower().startswith("y")
+if len(sys.argv) == 1:
+    immediate = input("Immediate? (y/n) ").lower().startswith("y")
+else:
+    immediate = sys.argv[1].lower().startswith("y")
 
 
 def frame():

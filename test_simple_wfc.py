@@ -45,6 +45,13 @@ def draw_board(board: list[list[BoardTile[SuperpositionTile]]], mark: tuple[int,
         print()
 
 
+def draw_visits_board(board: list[list[bool]]):
+    for line in board:
+        for el in line:
+            print('x' if el else '.', end='')
+        print()
+
+
 sleep = 0.1
 
 
@@ -62,14 +69,15 @@ def test_simple_wfc():
     inc = 0
 
     for step in collapse.solve():
+        board = [[False for _ in range(10)] for _ in range(10)]
         for pos in step:
+            board[pos[0]][pos[1]] = True
             frame()
             draw_board(collapse.board.board, pos)
             print("step: ", inc)
+            print("visited: ")
+            draw_visits_board(board)
         inc += 1
-
-    frame()
-    draw_board(collapse.board.board)
 
 
 test_simple_wfc()

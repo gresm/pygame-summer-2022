@@ -7,7 +7,7 @@ if __name__ != '__main__':
     raise RuntimeError('This file is not meant to be imported')
 
 
-def draw_board(board: list[list[int]]):
+def draw_board(board: list[list[bool]]):
     for line in board:
         for el in line:
             print('x' if el else '.', end='')

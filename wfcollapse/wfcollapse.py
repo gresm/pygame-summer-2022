@@ -79,13 +79,14 @@ class WFCAbstract(ABC):
         for pos, move in flood:
             yield pos
 
-            current_tile = self.board.tile_at(pos[0], pos[1])
-            if pos[0] != tile.x and pos[1] != tile.y:
-                self.solve_tile(current_tile)
-
             move.all_true()
+            current_tile = self.board.tile_at(pos[0], pos[1])
             move.eliminate_directions(*self.get_collapsable_neighbours(current_tile))
             move.eliminate_directions(*flood.box_limiter(pos, 0, 0, self.board.width, self.board.height))
+
+            if pos[0] != tile.x and pos[1] != tile.y:
+                if not self.solve_tile(current_tile):
+                    move.all_false()
 
     def step(self):
         """
@@ -93,7 +94,6 @@ class WFCAbstract(ABC):
         Returns False to stop the algorithm.
         """
         tile = self.find_tile_to_collapse()
-        print(tile)
         if tile is None:
             return False
 

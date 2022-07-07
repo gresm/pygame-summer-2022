@@ -22,7 +22,6 @@ class SimpleCollapse(WFCAbstract):
 
                 self.rules[v].add(v2)
                 self.rules[v2].add(v)
-        print(self.rules)
 
     def solve_tile(self, tile: BoardTile[SuperpositionTile]):
         neighbours = tile.neighbours()
@@ -30,10 +29,11 @@ class SimpleCollapse(WFCAbstract):
 
         for neighbour in neighbours:
             for superposition in tile.tile.superpositions:
-                if self.rules[superposition].intersection(neighbour.tile.superpositions):
+                if not self.rules[superposition].intersection(neighbour.tile.superpositions):
                     to_discard.add(superposition)
 
         tile.tile.superpositions.difference_update(to_discard)
+        return bool(to_discard)
 
     def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
         tile.tile.superpositions = {choice(list(tile.tile.superpositions))}

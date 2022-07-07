@@ -52,7 +52,7 @@ def draw_visits_board(board: list[list[bool]]):
         print()
 
 
-sleep = 0.1
+sleep = 0.05
 
 
 def frame():
@@ -62,7 +62,7 @@ def frame():
 
 def test_simple_wfc():
     collapse = SimpleCollapse(Board2d(10, 10, SuperpositionTile({0, 1, 2, 3})),
-                              {0: {1}, 1: {2}, 2: set(), 3: set()})
+                              {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}})
 
     frame()
     draw_board(collapse.board.board)
@@ -78,6 +78,9 @@ def test_simple_wfc():
             print("visited: ")
             draw_visits_board(board)
         inc += 1
+
+    frame()
+    draw_board(collapse.board.board)
 
 
 test_simple_wfc()

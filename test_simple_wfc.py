@@ -94,12 +94,32 @@ def test_simple_wfc():
                 draw_visits_board(board)
         inc += 1
 
-    frame()
+    if not immediate:
+        frame()
     draw_board(collapse.board.board, 4)
 
 
 def test_complex_wfc():
-    pass
+    collapse = Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3})), CollapseRules.parse(
+        [[[0, 2], [1], [0, 2], [2]], [[1, 0], [1], [1, 0], [1, 0]], [[2, 0], [2, 0], [2, 0], [2]]]))
+
+    inc = 0
+
+    for step in collapse.solve():
+        board = [[False for _ in range(collapse.board.width)] for _ in range(collapse.board.height)]
+        for pos in step:
+            if not immediate:
+                board[pos[0]][pos[1]] = True
+                frame()
+                draw_board(collapse.board.board, 4, pos)
+                print("step: ", inc)
+                print("visited: ")
+                draw_visits_board(board)
+        inc += 1
+
+    if not immediate:
+        frame()
+    draw_board(collapse.board.board, 4)
 
 
 try:

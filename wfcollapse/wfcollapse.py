@@ -75,8 +75,10 @@ class WFCAbstract(ABC):
 
     def wave_tile(self, tile: BoardTile[SuperpositionTile]):
 
-        flood = FloodIter(Flood(self.wave_depths, self.board.width, self.board.height))
+        flood = FloodIter(Flood(tile.x, tile.y, self.wave_depths))
         for pos, move in flood:
+            yield pos
+
             current_tile = self.board.tile_at(pos[0], pos[1])
             if pos[0] != tile.x and pos[1] != tile.y:
                 self.solve_tile(current_tile)
@@ -95,13 +97,14 @@ class WFCAbstract(ABC):
             return False
 
         self.collapse_tile(tile)
-        self.wave_tile(tile)
-
-        return True
+        return self.wave_tile(tile)
 
     def solve(self):
         """
         Solve the wave-function collapse.
         """
-        while self.step():
-            yield self.board
+        while True:
+            step = self.step()
+            if not step:
+                break
+            yield step

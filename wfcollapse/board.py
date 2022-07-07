@@ -1,8 +1,8 @@
-from copy import copy
+from copy import deepcopy
 from dataclasses import dataclass
 
 
-@dataclass()
+@dataclass(unsafe_hash=True)
 class BoardTile:
     x: int
     y: int
@@ -27,7 +27,7 @@ class Board2d:
     def __init__(self, width, height, default_value):
         self.__width = width
         self.__height = height
-        self.board = [[BoardTile(x=x, y=y, board=self, tile=copy(default_value)) for x in range(width)] for y in
+        self.board = [[BoardTile(x=x, y=y, board=self, tile=deepcopy(default_value)) for x in range(width)] for y in
                       range(height)]
 
     @property

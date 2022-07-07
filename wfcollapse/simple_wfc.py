@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from random import choice
 
 from .board import Board2d, BoardTile
@@ -8,10 +10,15 @@ from .wfcollapse import WFCAbstract
 class SimpleCollapse(WFCAbstract):
     def __init__(self, board: Board2d[SuperpositionTile], rules: dict[int, set[int]]):
         super().__init__(board)
-        self.rules = {v: set() for v in set(rules.keys()).union(rules.values())}
+        self.rules: dict[int, set[int]] = {}
 
         for v in rules:
             for v2 in rules[v]:
+                if v not in self.rules:
+                    self.rules[v] = set()
+                if v2 not in self.rules:
+                    self.rules[v2] = set()
+
                 self.rules[v].add(v2)
                 self.rules[v2].add(v)
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from random import choice
 from .wfcollapse import WFCAbstract
 from .board import Board2d, BoardTile
 from .superposition_tile import SuperpositionTile
@@ -74,14 +74,21 @@ class Collapse(WFCAbstract):
         self.rules = rules
 
     def calculate_valid_superpositions(self, tile: BoardTile[SuperpositionTile]):
-        ret = set()
+        ret = []
 
-        ret.update(self.rules.get_options(tile.tile.superpositions, 0, tile.left.tile.superpositions))
+        ret += (self.rules.get_options(tile.tile.superpositions, 0, tile.left.tile.superpositions))
+        ret += (self.rules.get_options(tile.tile.superpositions, 1, tile.up.tile.superpositions))
+        ret += (self.rules.get_options(tile.tile.superpositions, 2, tile.right.tile.superpositions))
+        ret += (self.rules.get_options(tile.tile.superpositions, 3, tile.down.tile.superpositions))
+
+        return ret
 
     def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
         if not tile.tile.collapsed:
-            pass
-            # tile.tile.superpositions
+            tile.tile.superpositions = {choice(self.calculate_valid_superpositions(tile))}
+
+    def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]) -> BoardTile[SuperpositionTile]:
+        return tiles.pop()
 
 
 __all__ = ['Collapse']

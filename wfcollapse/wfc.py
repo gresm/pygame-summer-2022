@@ -50,8 +50,8 @@ class CollapseRules:
         valid: set[int] = set()
 
         for superposition in superpositions:
-            for tile_type in tile_type:
-                if self.rules[superposition].compare(orientation, tile_type):
+            for tile in tile_type:
+                if self.rules[superposition].compare(orientation, tile):
                     valid.add(superposition)
         return valid
 

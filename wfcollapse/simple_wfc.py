@@ -31,3 +31,6 @@ class SimpleCollapse(WFCAbstract):
 
     def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]) -> BoardTile[SuperpositionTile]:
         return tiles.pop()
+
+
+__all__ = ['SimpleCollapse']

@@ -29,11 +29,17 @@ class Board2d:
     def height(self):
         return self.__height
 
+    def check_pos(self, x, y):
+        """
+        Check if position is in board.
+        """
+        return 0 <= x < self.width and 0 <= y < self.height
+
     def set_at(self, x, y, value):
         """
         Set value at position.
         """
-        self.board[x][y].tile = value
+        self.tile_at(x, y).tile = value
 
     def get_at(self, x, y):
         return self.tile_at(x, y).tile

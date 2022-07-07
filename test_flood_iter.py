@@ -1,7 +1,7 @@
 import os
 import time
 
-from flood_iter import Flood, FloodIter
+from wfcollapse.flood_iter import Flood, FloodIter
 
 if __name__ != '__main__':
     raise RuntimeError('This file is not meant to be imported')

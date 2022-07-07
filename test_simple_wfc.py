@@ -1,9 +1,9 @@
 import os
 import time
 
-from board import Board2d, BoardTile
-from superposition_tile import SuperpositionTile
-from simple_wfc import SimpleCollapse
+from wfcollapse.board import Board2d, BoardTile
+from wfcollapse.superposition_tile import SuperpositionTile
+from wfcollapse.simple_wfc import SimpleCollapse
 
 
 if __name__ != '__main__':

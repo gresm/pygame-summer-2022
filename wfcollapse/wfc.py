@@ -117,4 +117,4 @@ class Collapse(WFCAbstract):
         return before != tile.tile.superpositions
 
 
-__all__ = ['Collapse']
+__all__ = ['Collapse', 'CollapseRules', 'TileRules']

@@ -8,6 +8,7 @@ from turtle import width
 from wfcollapse.board import Board2d, BoardTile
 from wfcollapse.superposition_tile import SuperpositionTile
 from wfcollapse.simple_wfc import SimpleCollapse
+from wfcollapse.wfc import Collapse, CollapseRules
 
 if __name__ != '__main__':
     raise RuntimeError('This file is not meant to be imported')

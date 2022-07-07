@@ -29,7 +29,8 @@ class SimpleCollapse(WFCAbstract):
 
         for neighbour in neighbours:
             for superposition in tile.tile.superpositions:
-                if not self.rules[superposition].intersection(neighbour.tile.superpositions):
+                if (not neighbour.tile.unsolvable) and \
+                        not self.rules[superposition].intersection(neighbour.tile.superpositions):
                     to_discard.add(superposition)
 
         tile.tile.superpositions.difference_update(to_discard)

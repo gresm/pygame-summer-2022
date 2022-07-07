@@ -104,4 +104,4 @@ class WFCAbstract(ABC):
         Solve the wave-function collapse.
         """
         while self.step():
-            pass
+            yield self.board

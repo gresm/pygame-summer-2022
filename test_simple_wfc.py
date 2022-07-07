@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import sys
 import time
+from turtle import width
 
 from wfcollapse.board import Board2d, BoardTile
 from wfcollapse.superposition_tile import SuperpositionTile
@@ -61,6 +62,16 @@ if len(sys.argv) == 1:
 else:
     immediate = sys.argv[1].lower().startswith("y")
 
+if len(sys.argv) > 2:
+    width = int(sys.argv[2])
+else:
+    width = 40
+
+if len(sys.argv) > 3:
+    height = int(sys.argv[3])
+else:
+    height = 40
+
 
 def frame():
     time.sleep(sleep)
@@ -68,7 +79,7 @@ def frame():
 
 
 def test_simple_wfc():
-    collapse = SimpleCollapse(Board2d(40, 40, SuperpositionTile({0, 1, 2, 3})),
+    collapse = SimpleCollapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3})),
                               {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}})
 
     inc = 0

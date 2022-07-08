@@ -6,7 +6,10 @@ from .wfc_abstract import WFCAbstract
 class SideGroup:
     def __init__(self, rules: CollapseRules):
         self.rules = rules
-        self.id = self.rules.create_rule_id()
+        self.id = self.rules.create_side_id()
+
+    def __str__(self):
+        return f"<{self.__class__.__module__}.{self.__class__.__name__}(id={self.id})>"
 
     def resolve(self):
         return self.id
@@ -21,6 +24,7 @@ class TileRule:
         self.bottom = bottom
         self._can_finalize = True
         self.cached: set[TileRule] = set()
+        self.id = self.rules.add_tile_rule(self)
 
     def __str__(self):
         return f'{self.left}, {self.top}, {self.right}, {self.bottom}'
@@ -36,7 +40,8 @@ class TileRule:
         return self.left, self.top, self.right, self.bottom
 
     def clone(self) -> TileRule:
-        return self.create(self.left, self.top, self.right, self.bottom)
+        ret = self.create(self.left, self.top, self.right, self.bottom)
+        return ret
 
     def clone_multiple(self, number: int) -> list[TileRule]:
         ret = []
@@ -49,13 +54,15 @@ class TileRule:
         self.cached.add(ret)
         return ret
 
-    def flip(self, x_axis: bool, y_axis: bool) -> TileRule:
+    def flip(self, x_axis: bool = False, y_axis: bool = False) -> TileRule:
         ret = list(self.all)
+        print(ret)
         if x_axis:
             ret[0], ret[2] = ret[2], ret[0]
         if y_axis:
             ret[1], ret[3] = ret[3], ret[1]
 
+        print(ret)
         ret = self.create(*ret)
         return ret
 
@@ -69,7 +76,7 @@ class TileRule:
         ret = dict()
 
         if self._can_finalize:
-            ret[self.rules.create_rule_id()] = self.resolve_self()
+            ret[self.id] = self.resolve_self()
 
         for rule in self.cached:
             ret.update(rule.resolve())
@@ -100,8 +107,10 @@ class CollapseRules:
         self._side_increment_id = 0
         self._rules_increment_id = 0
 
-    def add_tile_rule(self, rule: TileRule):
-        self.rules[self.create_rule_id()] = rule
+    def add_tile_rule(self, rule: TileRule) -> int:
+        rule_id = self.create_rule_id()
+        self.rules[rule_id] = rule
+        return rule_id
 
     def create_rule_id(self) -> int:
         ret = self._rules_increment_id
@@ -118,6 +127,8 @@ class CollapseRules:
 
         for rule in self.rules:
             ret.update(self.rules[rule].resolve())
+
+        return ret
 
 
 class Collapse:

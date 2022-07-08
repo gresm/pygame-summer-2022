@@ -18,14 +18,13 @@ def in_color(text: str, foreground, background):
     return f"{mat}{text}\33[0m"
 
 
-def draw_board(board: list[list[BoardTile[SuperpositionTile]]], states: int, tile_width: int,
-               mark: tuple[int, int] | None = None):
-    colors_list = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 0), (0, 255, 0), (0, 0, 255), (0, 0, 255),
-                   (0, 0, 255),
-                   (255, 255, 0), (255, 0, 255),
-                   (0, 255, 255), (128, 128, 128),
-                   (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128), (0, 128, 128), (128, 128, 128)]
+colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 0), (255, 255, 0), (255, 0, 255), (0, 255, 255),
+          (128, 128, 128), (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128),
+          (0, 128, 128), (128, 128, 128)]
 
+
+def draw_board(colors_list: list[tuple[int, int, int]], board: list[list[BoardTile[SuperpositionTile]]], states: int,
+               tile_width: int, mark: tuple[int, int] | None = None):
     for x in range(len(board)):
         str_rows: list[str] = ["" for _ in range(tile_width)]
         for y in range(len(board[x])):
@@ -91,7 +90,7 @@ def test_simple_wfc():
             if not immediate:
                 board[pos[0]][pos[1]] = True
                 frame()
-                draw_board(collapse.board.board, 9, 3, pos)
+                draw_board(colors, collapse.board.board, 9, 3, pos)
                 print("step: ", inc)
                 print("visited: ")
                 draw_visits_board(board)
@@ -99,7 +98,7 @@ def test_simple_wfc():
 
     if not immediate:
         frame()
-    draw_board(collapse.board.board, 9, 3)
+    draw_board(colors, collapse.board.board, 9, 3)
 
 
 def test_complex_wfc():
@@ -115,7 +114,7 @@ def test_complex_wfc():
             if not immediate:
                 board[pos[0]][pos[1]] = True
                 frame()
-                draw_board(collapse.board.board, 4, 2, pos)
+                draw_board(colors, collapse.board.board, 4, 2, pos)
                 print("step: ", inc)
                 print("visited: ")
                 draw_visits_board(board)
@@ -123,7 +122,7 @@ def test_complex_wfc():
 
     if not immediate:
         frame()
-    draw_board(collapse.board.board, 4, 2)
+    draw_board(colors, collapse.board.board, 4, 2)
 
 
 try:

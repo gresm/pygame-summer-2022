@@ -5,8 +5,8 @@ import time
 
 from wfcollapse.board import Board2d, BoardTile
 from wfcollapse.superposition_tile import SuperpositionTile
-from wfcollapse.simple_wfc import SimpleCollapse
-from wfcollapse.wfc_old import Collapse, CollapseRules
+from wfcollapse import simple_wfc
+from wfcollapse import wfc_old
 from argparse import ArgumentParser
 
 if __name__ != '__main__':
@@ -81,8 +81,8 @@ def frame():
 
 
 def test_simple_wfc():
-    collapse = SimpleCollapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3})),
-                              {0: {0, 1}, 1: {1, 0}, 2: {1, 2, 3}, 3: {3}})
+    collapse = simple_wfc.SimpleCollapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3})),
+                                         {0: {0, 1}, 1: {1, 0}, 2: {1, 2, 3}, 3: {3}})
 
     inc = 0
 
@@ -104,9 +104,10 @@ def test_simple_wfc():
 
 
 def test_old_wfc():
-    collapse = Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3, 4, 5, 6, 7})), CollapseRules.parse(
-        {0: (0, 0, 0, 0), 1: (1, 1, 1, 0), 2: (2, 2, 2, 1), 3: (1, 1, 0, 0), 4: (0, 1, 0, 0), 5: (2, 2, 1, 1),
-         6: (1, 2, 2, 1), 7: (2, 2, 2, 2)}))
+    collapse = wfc_old.Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3, 4, 5, 6, 7})),
+                                wfc_old.CollapseRules.parse(
+                                    {0: (0, 0, 0, 0), 1: (1, 1, 1, 0), 2: (2, 2, 2, 1), 3: (1, 1, 0, 0),
+                                     4: (0, 1, 0, 0), 5: (2, 2, 1, 1), 6: (1, 2, 2, 1), 7: (2, 2, 2, 2)}))
 
     inc = 0
 

@@ -19,6 +19,8 @@ class TileRule:
         self.top = top
         self.right = right
         self.bottom = bottom
+        self._can_finalize = True
+        self.cached: set[TileRule] = set()
 
     def __str__(self):
         return f'{self.left}, {self.top}, {self.right}, {self.bottom}'
@@ -33,21 +35,57 @@ class TileRule:
     def all(self):
         return self.left, self.top, self.right, self.bottom
 
-    def flipped(self, x_axis: bool, y_axis: bool) -> TileRule:
+    def clone(self) -> TileRule:
+        return self.create(self.left, self.top, self.right, self.bottom)
+
+    def clone_multiple(self, number: int) -> list[TileRule]:
+        ret = []
+        for _ in range(number):
+            ret.append(self.clone())
+        return ret
+
+    def create(self, left: SideGroup, top: SideGroup, right: SideGroup, bottom: SideGroup) -> TileRule:
+        ret = TileRule(self.rules, left, top, right, bottom)
+        self.cached.add(ret)
+        return ret
+
+    def flip(self, x_axis: bool, y_axis: bool) -> TileRule:
         ret = list(self.all)
         if x_axis:
             ret[0], ret[2] = ret[2], ret[0]
         if y_axis:
             ret[1], ret[3] = ret[3], ret[1]
-        return TileRule(*ret)
 
-    def rotated(self, by: int) -> TileRule:
+        ret = self.create(*ret)
+        return ret
+
+    def remove(self):
+        self._can_finalize = False
+
+    def resolve_self(self):
+        return self.left.resolve(), self.top.resolve(), self.right.resolve(), self.bottom.resolve()
+
+    def resolve(self):
+        ret = dict()
+
+        ret[self.rules.create_rule_id()] = self.resolve_self()
+
+    def rotate(self, by: int) -> TileRule:
         def rotate(num: int, rot_by: int) -> int:
             return (num + rot_by) % 4
 
         ret = list(self.all)
         ret[0], ret[1], ret[2], ret[3] = ret[rotate(0, by)], ret[rotate(1, by)], ret[rotate(2, by)], ret[rotate(3, by)]
-        return TileRule(*ret)
+        ret = self.create(*ret)
+        return ret
+
+    def rotate_multiple(self, by: int, number: int):
+        ret = []
+
+        for inc in range(number):
+            ret.append(self.rotate(by * inc))
+
+        return ret
 
 
 class CollapseRules:
@@ -65,6 +103,9 @@ class CollapseRules:
         ret = self._rules_increment_id
         self._rules_increment_id += 1
         return ret
+
+    def add_tile_rule(self, rule: TileRule):
+        self.rules[self.create_rule_id()] = rule
 
 
 class Collapse:

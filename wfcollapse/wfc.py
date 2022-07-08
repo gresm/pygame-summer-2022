@@ -47,11 +47,31 @@ class CollapseRules:
     def __init__(self, rules: dict[int, TileRules], chance: dict[int, int] | None = None):
         self.rules = rules
         self.chance = chance
+        self._fix_rules()
 
     @classmethod
     def parse(cls, rules: dict[int, _TileRulesFormat], chance: list[int] | None = None):
         rules_dict = {r: TileRules.parse(rules[r]) for r in rules}
         return cls(rules_dict, {i: chance[i] for i in range(len(chance))} if chance else None)
+
+    def _fix_rules(self):
+        for superposition in self.rules:
+            left_rule = self.rules[superposition].rules[0]
+            top_rule = self.rules[superposition].rules[1]
+            right_rule = self.rules[superposition].rules[2]
+            bottom_rule = self.rules[superposition].rules[3]
+
+            for allowed in left_rule:
+                self.rules[allowed].rules[2].add(superposition)
+
+            for allowed in top_rule:
+                self.rules[allowed].rules[3].add(superposition)
+
+            for allowed in right_rule:
+                self.rules[allowed].rules[0].add(superposition)
+
+            for allowed in bottom_rule:
+                self.rules[allowed].rules[1].add(superposition)
 
     def collapse(self, superpositions: set[int], orientation: int, tile_type: set[int]):
         if not len(tile_type):

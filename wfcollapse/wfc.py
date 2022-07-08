@@ -1,9 +1,19 @@
 from __future__ import annotations
 
+from typing import Iterable, Union
 from random import choice
 from .wfcollapse import WFCAbstract
 from .board import Board2d, BoardTile
 from .superposition_tile import SuperpositionTile
+
+_TileSideFormat = Union[Iterable[int], int, None]
+
+_TileRulesFormat = tuple[
+    _TileSideFormat,  # left
+    _TileSideFormat,  # top
+    _TileSideFormat,  # right
+    _TileSideFormat,  # bottom
+]
 
 
 class TileRules:
@@ -11,15 +21,17 @@ class TileRules:
         self.rules = rules
 
     @classmethod
-    def parse(cls, rules: list[list[int]]):
-        return cls(
-            (
-                set(rules[0]),
-                set(rules[1]),
-                set(rules[2]),
-                set(rules[3])
-            )
-        )
+    def parse(
+            cls, rules: _TileRulesFormat
+    ) -> TileRules:
+        def transform(side: _TileSideFormat) -> set[int]:
+            if side is None:
+                return set()
+            if isinstance(side, int):
+                return {side}
+            return set(side)
+    
+        return cls((transform(rules[0]), transform(rules[1]), transform(rules[2]), transform(rules[3])))
 
     def compare(self, orientation: int, tile_type: int) -> bool:
         if not 0 <= orientation < 4:
@@ -37,10 +49,8 @@ class CollapseRules:
         self.chance = chance
 
     @classmethod
-    def parse(cls, rules: list[list[list[int]]], chance: list[int] | None = None):
-        rules_dict = {}
-        for superposition in range(len(rules)):
-            rules_dict[superposition] = TileRules.parse(rules[superposition])
+    def parse(cls, rules: dict[int, _TileRulesFormat], chance: list[int] | None = None):
+        rules_dict = {r: TileRules.parse(rules[r]) for r in rules}
         return cls(rules_dict, {i: chance[i] for i in range(len(chance))} if chance else None)
 
     def collapse(self, superpositions: set[int], orientation: int, tile_type: set[int]):

@@ -4,7 +4,7 @@ from random import choice
 
 from .board import Board2d, BoardTile
 from .superposition_tile import SuperpositionTile
-from .wfcollapse import WFCAbstract
+from .wfc_abstract import WFCAbstract
 
 
 class SimpleCollapse(WFCAbstract):

@@ -21,6 +21,7 @@ def in_color(text: str, foreground, background):
 colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 0), (255, 255, 0), (255, 0, 255), (0, 255, 255),
           (128, 128, 128), (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128),
           (0, 128, 128), (128, 128, 128)]
+simple_colors = [colors[2], colors[4], colors[1], colors[0]]
 
 
 def draw_board(colors_list: list[tuple[int, int, int]], board: list[list[BoardTile[SuperpositionTile]]], states: int,
@@ -72,7 +73,6 @@ sleep = args.delay
 immediate = args.immediate
 width = args.width
 height = args.height
-run_complex_test = args.complex_test
 
 
 def frame():
@@ -82,7 +82,7 @@ def frame():
 
 def test_simple_wfc():
     collapse = SimpleCollapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3})),
-                              {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}})
+                              {0: {0, 1}, 1: {1, 0}, 2: {1, 2, 3}, 3: {3}})
 
     inc = 0
 
@@ -92,7 +92,7 @@ def test_simple_wfc():
             if not immediate:
                 board[pos[0]][pos[1]] = True
                 frame()
-                draw_board(colors, collapse.board.board, 9, 3, pos)
+                draw_board(simple_colors, collapse.board.board, 9, 3, pos)
                 print("step: ", inc)
                 print("visited: ")
                 draw_visits_board(board)
@@ -100,7 +100,7 @@ def test_simple_wfc():
 
     if not immediate:
         frame()
-    draw_board(colors, collapse.board.board, 9, 3)
+    draw_board(simple_colors, collapse.board.board, 9, 3)
 
 
 def test_old_wfc():

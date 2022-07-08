@@ -20,6 +20,12 @@ class TileRules:
     def __init__(self, rules: tuple[set[int], set[int], set[int], set[int]]):
         self.rules = rules
 
+    def __str__(self):
+        return str(self.rules)
+
+    def __repr__(self):
+        return str(self)
+
     @classmethod
     def parse(
             cls, rules: _TileRulesFormat

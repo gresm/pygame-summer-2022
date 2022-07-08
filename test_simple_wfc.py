@@ -59,11 +59,13 @@ def draw_visits_board(board: list[list[bool]]):
 
 
 parser = ArgumentParser()
-parser.add_argument('-w', '--width', type=int, default=10)
-parser.add_argument('-hg', '--height', type=int, default=10)
-parser.add_argument('-i', '--immediate', action='store_true')
-parser.add_argument('-d', '--delay', type=float, default=0.1)
-parser.add_argument('--complex-test', action='store_true')
+parser.add_argument('-w', '--width', type=int, default=10, help='width of the board')
+parser.add_argument('-hg', '--height', type=int, default=10, help='height of the board')
+parser.add_argument('-i', '--immediate', action='store_true', default=False, help='draw board immediately')
+parser.add_argument('-d', '--delay', type=float, default=0.1, help='delay between steps')
+parser.add_argument(
+    '-a', '--algo', '--algorithm', type=int, choices=[0, 1, 2], default=0, help='0: simple, 1: old, 2: new'
+)
 args = parser.parse_args()
 
 sleep = args.delay
@@ -101,7 +103,7 @@ def test_simple_wfc():
     draw_board(colors, collapse.board.board, 9, 3)
 
 
-def test_complex_wfc():
+def test_old_wfc():
     collapse = Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3, 4, 5, 6, 7})), CollapseRules.parse(
         {0: (0, 0, 0, 0), 1: (1, 1, 1, 0), 2: (2, 2, 2, 1), 3: (1, 1, 0, 0), 4: (0, 1, 0, 0), 5: (2, 2, 1, 1),
          6: (1, 2, 2, 1), 7: (2, 2, 2, 2)}))
@@ -126,10 +128,8 @@ def test_complex_wfc():
 
 
 try:
-    if run_complex_test:
-        test_complex_wfc()
-    else:
-        test_simple_wfc()
+    tests = [test_simple_wfc, test_old_wfc]
+    tests[args.algo]()
 except KeyboardInterrupt:
     print("Interrupted, exiting...")
     exit(1)

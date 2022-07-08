@@ -70,6 +70,11 @@ class TileRule:
 
         ret[self.rules.create_rule_id()] = self.resolve_self()
 
+        for rule in self.cached:
+            ret.update(rule.resolve())
+
+        return ret
+
     def rotate(self, by: int) -> TileRule:
         def rotate(num: int, rot_by: int) -> int:
             return (num + rot_by) % 4
@@ -90,22 +95,28 @@ class TileRule:
 
 class CollapseRules:
     def __init__(self):
-        self.rules = {}
+        self.rules: dict[int, TileRule] = {}
         self._side_increment_id = 0
         self._rules_increment_id = 0
 
-    def create_side_id(self) -> int:
-        ret = self._side_increment_id
-        self._rules_increment_id += 1
-        return ret
+    def add_tile_rule(self, rule: TileRule):
+        self.rules[self.create_rule_id()] = rule
 
     def create_rule_id(self) -> int:
         ret = self._rules_increment_id
         self._rules_increment_id += 1
         return ret
 
-    def add_tile_rule(self, rule: TileRule):
-        self.rules[self.create_rule_id()] = rule
+    def create_side_id(self) -> int:
+        ret = self._side_increment_id
+        self._side_increment_id += 1
+        return ret
+
+    def resolve(self):
+        ret = {}
+
+        for rule in self.rules:
+            ret.update(self.rules[rule].resolve())
 
 
 class Collapse:

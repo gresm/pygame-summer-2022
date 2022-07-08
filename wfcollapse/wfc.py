@@ -68,7 +68,8 @@ class TileRule:
     def resolve(self):
         ret = dict()
 
-        ret[self.rules.create_rule_id()] = self.resolve_self()
+        if self._can_finalize:
+            ret[self.rules.create_rule_id()] = self.resolve_self()
 
         for rule in self.cached:
             ret.update(rule.resolve())

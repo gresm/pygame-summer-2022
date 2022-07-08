@@ -20,8 +20,10 @@ def in_color(text: str, foreground, background):
 
 def draw_board(board: list[list[BoardTile[SuperpositionTile]]], states: int, tile_width: int,
                mark: tuple[int, int] | None = None):
-    colors_list = [(255, 0, 0), (255, 0, 0), (0, 255, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255), (0, 0, 255),
-                   (255, 0, 255), (0, 255, 255), (128, 128, 128),
+    colors_list = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 0), (0, 255, 0), (0, 0, 255), (0, 0, 255),
+                   (0, 0, 255),
+                   (255, 255, 0), (255, 0, 255),
+                   (0, 255, 255), (128, 128, 128),
                    (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128), (0, 128, 128), (128, 128, 128)]
 
     for x in range(len(board)):
@@ -78,8 +80,8 @@ def frame():
 
 
 def test_simple_wfc():
-    collapse = SimpleCollapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3, 4, 5, 6, 7})),
-                              {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}, 4: {3, 4}, 5: {4, 5}, 6: {5, 6}, 7: {6, 7}})
+    collapse = SimpleCollapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3})),
+                              {0: {0}, 1: {1, 0}, 2: {1, 2}, 3: {2, 3}})
 
     inc = 0
 
@@ -101,8 +103,9 @@ def test_simple_wfc():
 
 
 def test_complex_wfc():
-    collapse = Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2})), CollapseRules.parse(
-        {0: (None, None, None, None), 1: (0, None, None, None), 2: (0, 1, None, None)}))
+    collapse = Collapse(Board2d(width, height, SuperpositionTile({0, 1, 2, 3, 4, 5, 6, 7})), CollapseRules.parse(
+        {0: (0, 0, 0, 0), 1: (1, 1, 1, 0), 2: (2, 2, 2, 1), 3: (1, 1, 0, 0), 4: (0, 1, 0, 0), 5: (2, 2, 1, 1),
+         6: (1, 2, 2, 1), 7: (2, 2, 2, 2)}))
 
     inc = 0
 
@@ -112,7 +115,7 @@ def test_complex_wfc():
             if not immediate:
                 board[pos[0]][pos[1]] = True
                 frame()
-                draw_board(collapse.board.board, 4, pos)
+                draw_board(collapse.board.board, 4, 2, pos)
                 print("step: ", inc)
                 print("visited: ")
                 draw_visits_board(board)

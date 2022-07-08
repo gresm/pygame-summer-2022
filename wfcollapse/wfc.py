@@ -6,7 +6,7 @@ from .wfcollapse import WFCAbstract
 from .board import Board2d, BoardTile
 from .superposition_tile import SuperpositionTile
 
-_TileSideFormat = Union[Iterable[int], int, None]
+_TileSideFormat = int
 
 _TileRulesFormat = tuple[
     _TileSideFormat,  # left
@@ -17,7 +17,7 @@ _TileRulesFormat = tuple[
 
 
 class TileRules:
-    def __init__(self, rules: tuple[set[int], set[int], set[int], set[int]]):
+    def __init__(self, rules: tuple[int, int, int, int]):
         self.rules = rules
 
     def __str__(self):
@@ -26,58 +26,22 @@ class TileRules:
     def __repr__(self):
         return str(self)
 
-    @classmethod
-    def parse(
-            cls, rules: _TileRulesFormat
-    ) -> TileRules:
-        def transform(side: _TileSideFormat) -> set[int]:
-            if side is None:
-                return set()
-            if isinstance(side, int):
-                return {side}
-            return set(side)
-    
-        return cls((transform(rules[0]), transform(rules[1]), transform(rules[2]), transform(rules[3])))
+    def __getitem__(self, item):
+        return self.rules[item]
 
-    def compare(self, orientation: int, tile_type: int) -> bool:
-        if not 0 <= orientation < 4:
-            return False
-
-        if tile_type == -1 or len(self.rules[orientation]) == 0:
-            return True
-
-        return tile_type in self.rules[orientation]
+    def compare(self, collapse_rules: CollapseRules, tile_type: int, side: int) -> bool:
+        return collapse_rules.rules[tile_type][side] == self[(side - 2) % 4]
 
 
 class CollapseRules:
     def __init__(self, rules: dict[int, TileRules], chance: dict[int, int] | None = None):
         self.rules = rules
         self.chance = chance
-        self._fix_rules()
 
     @classmethod
-    def parse(cls, rules: dict[int, _TileRulesFormat], chance: list[int] | None = None):
-        rules_dict = {r: TileRules.parse(rules[r]) for r in rules}
-        return cls(rules_dict, {i: chance[i] for i in range(len(chance))} if chance else None)
-
-    def _fix_rules(self):
-        for superposition in self.rules:
-            left_rule = self.rules[superposition].rules[0]
-            top_rule = self.rules[superposition].rules[1]
-            right_rule = self.rules[superposition].rules[2]
-            bottom_rule = self.rules[superposition].rules[3]
-
-            for allowed in left_rule:
-                self.rules[allowed].rules[2].add(superposition)
-
-            for allowed in top_rule:
-                self.rules[allowed].rules[3].add(superposition)
-
-            for allowed in right_rule:
-                self.rules[allowed].rules[0].add(superposition)
-
-            for allowed in bottom_rule:
-                self.rules[allowed].rules[1].add(superposition)
+    def parse(cls, rules: dict[int, _TileRulesFormat], chance: dict[int: int] | None = None):
+        rules_dict = {r: TileRules(rules[r]) for r in rules}
+        return cls(rules_dict, chance)
 
     def collapse(self, superpositions: set[int], orientation: int, tile_type: set[int]):
         if not len(tile_type):
@@ -87,7 +51,7 @@ class CollapseRules:
 
         for superposition in superpositions:
             for tile in tile_type:
-                if self.rules[superposition].compare(orientation, tile):
+                if self.rules[superposition].compare(self, tile, orientation):
                     valid.add(superposition)
         return valid
 

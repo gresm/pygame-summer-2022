@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from random import choice
+from typing import TypedDict
 from .board import Board2d, BoardTile
 from .superposition_tile import SuperpositionTile
 from .wfc_abstract import WFCAbstract
@@ -18,6 +19,12 @@ class SideGroup:
         return self.id
 
 
+class TileResolveDict(TypedDict):
+    sides: tuple[int, int, int, int]
+    global_chance: list[int]
+    neighbour_probability: list[dict[int, list[int]]]
+
+
 class TileRule:
     def __init__(self, rules: CollapseRules, left: SideGroup, top: SideGroup, right: SideGroup, bottom: SideGroup,
                  global_chance: int = 1):
@@ -30,6 +37,10 @@ class TileRule:
         self.global_chance = global_chance
         self.id = self.rules.add_tile_rule(self)
         self.global_pollute_table = [self.id] * self.global_chance
+        self.left_chance: dict[int, int] = {}
+        self.top_chance: dict[int, int] = {}
+        self.right_chance: dict[int, int] = {}
+        self.bottom_chance: dict[int, int] = {}
 
     def __str__(self):
         return f'{self.left}, {self.top}, {self.right}, {self.bottom}'
@@ -43,6 +54,16 @@ class TileRule:
     @property
     def all(self):
         return self.left, self.top, self.right, self.bottom
+
+    def set_neighbour_probability(self, side: int, neighbour: TileRule, chance: int):
+        if side == 0:
+            self.left_chance[neighbour.id] = chance
+        elif side == 1:
+            self.top_chance[neighbour.id] = chance
+        elif side == 2:
+            self.right_chance[neighbour.id] = chance
+        elif side == 3:
+            self.bottom_chance[neighbour.id] = chance
 
     def clone(self) -> TileRule:
         ret = self.create(self.left, self.top, self.right, self.bottom)
@@ -73,12 +94,28 @@ class TileRule:
     def remove(self):
         self._can_finalize = False
 
+    def resolve_side_neighbour_probability(self, side: int) -> dict[int, list[int]]:
+        sides = [self.left_chance, self.top_chance, self.right_chance, self.bottom_chance]
+        neighbour = sides[side]
+        ret = {}
+        for tile_id, chance in neighbour.items():
+            ret[tile_id] = [self.id] * chance
+        return ret
+
     def resolve_self(self):
         return self.left.resolve(), self.top.resolve(), self.right.resolve(), self.bottom.resolve()
 
-    def resolve(self) -> dict[int, dict[str, tuple[int, int, int, int] | list[int]]]:
+    def resolve(self) -> dict[int, TileResolveDict]:
         if self._can_finalize:
-            return {self.id: {"sides": self.resolve_self(), "global-chance": self.global_pollute_table}}
+            return {self.id: {
+                "sides": self.resolve_self(), "global_chance": self.global_pollute_table,
+                "neighbour_probability": [
+                    self.resolve_side_neighbour_probability(0),
+                    self.resolve_side_neighbour_probability(1),
+                    self.resolve_side_neighbour_probability(2),
+                    self.resolve_side_neighbour_probability(3)
+                ]
+            }}
         return {}
 
     def rotate(self, by: int) -> TileRule:
@@ -126,7 +163,7 @@ class CollapseRules:
         self._side_increment_id += 1
         return ret
 
-    def resolve(self) -> dict[int, dict[str, tuple[int, int, int, int] | list[int]]]:
+    def resolve(self) -> dict[int, TileResolveDict]:
         ret = {}
 
         for rule in self.rules:
@@ -159,10 +196,13 @@ class Collapse(WFCAbstract):
 
         return to_keep
 
+    def _side_chance_creator(self, chances: list[int], tile: int, side_tile: int, side: int):
+        pass
+
     def get_tile_chances(self, tile_type: BoardTile[SuperpositionTile]) -> list[int]:
         ret: list[int] = []
         for tile_superpositions in tile_type.tile.superpositions:
-            ret += self.rules[tile_superpositions]["global-chance"]
+            ret += self.rules[tile_superpositions]["global_chance"]
 
         return ret
 

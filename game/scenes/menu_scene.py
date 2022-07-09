@@ -1,7 +1,10 @@
+import webbrowser
 import pygame as pg
 from gamelib import BaseScene
 
 from .. import assets
+
+from .quit_scene import QuitScene
 
 
 def draw_line_under_rect(surface: pg.Surface, color: tuple[int, int, int], rect: pg.Rect):
@@ -50,7 +53,6 @@ class MainMenu(BaseScene):
         self.quit_rect.midright = pg.Vector2(self.widgets_rect.midright) - pg.Vector2(50, 0)
 
     def draw(self, window: pg.Surface):
-        window.fill((0, 0, 0))
         pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
         pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
 
@@ -69,6 +71,16 @@ class MainMenu(BaseScene):
             draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
 
     def update(self, delta_time: float):
+        for event in self.get_events():
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if self.currently_selecting == 1:
+                    pass
+                elif self.currently_selecting == 2:
+                    pass
+                elif self.currently_selecting == 3:
+                    self.manager.spawn_scene(QuitScene)
+                elif self.currently_selecting == 4:
+                    webbrowser.open("https://pygame.org/")
         mouse_pos = pg.mouse.get_pos()
         if self.play_rect.collidepoint(mouse_pos):
             self.currently_selecting = 1

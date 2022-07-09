@@ -23,7 +23,7 @@ class SimpleCollapse(WFCAbstract):
                 self.rules[v].add(v2)
                 self.rules[v2].add(v)
 
-    def solve_tile(self, tile: BoardTile[SuperpositionTile]):
+    def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
         neighbours = tile.neighbours()
         to_discard = set()
 

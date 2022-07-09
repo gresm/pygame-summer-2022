@@ -16,7 +16,7 @@ class WFCAbstract(ABC):
         self.board = board
 
     @abstractmethod
-    def solve_tile(self, tile: BoardTile[SuperpositionTile]):
+    def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
         """
         Reduce superpositions of the tile.
         """
@@ -85,7 +85,7 @@ class WFCAbstract(ABC):
             move.eliminate_directions(*flood.box_limiter(pos, 0, 0, self.board.width, self.board.height))
 
             if pos[0] != tile.x and pos[1] != tile.y:
-                if not self.solve_tile(current_tile):
+                if not self.reduce_tile(current_tile):
                     move.all_false()
 
     def step(self):
@@ -97,7 +97,7 @@ class WFCAbstract(ABC):
         if tile is None:
             return False
 
-        self.solve_tile(tile)
+        self.reduce_tile(tile)
         self.collapse_tile(tile)
         return self.wave_tile(tile)
 

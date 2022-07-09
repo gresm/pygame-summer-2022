@@ -111,7 +111,7 @@ class Collapse(WFCAbstract):
     def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]) -> BoardTile[SuperpositionTile]:
         return tiles.pop()
 
-    def solve_tile(self, tile: BoardTile[SuperpositionTile]):
+    def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
         before = tile.tile.superpositions
         tile.tile.superpositions = self.rules.collapse_around(tile)
         return before != tile.tile.superpositions

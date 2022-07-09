@@ -52,6 +52,7 @@ class TileRule:
     def create(self, left: SideGroup, top: SideGroup, right: SideGroup, bottom: SideGroup) -> TileRule:
         ret = TileRule(self.rules, left, top, right, bottom)
         self.cached.add(ret)
+        del self.rules.rules[ret.id]
         return ret
 
     def flip(self, x_axis: bool = False, y_axis: bool = False) -> TileRule:

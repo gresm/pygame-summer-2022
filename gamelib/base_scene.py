@@ -32,6 +32,7 @@ class Scene:
         self._events: list[pg.event.Event] = []
         self.frame_counter = FrameCounter(self.manager.game.max_fps)
         self.init()
+        self.initialised = False
 
     def __init_subclass__(cls, **kwargs):
         Scene._scenes_cnt += 1
@@ -48,6 +49,14 @@ class Scene:
 
     def init(self, *args, **kwargs):
         pass
+
+    def after_init(self):
+        pass
+
+    def call_after_init(self):
+        if not self.initialised:
+            self.after_init()
+            self.initialised = True
 
     def add_event_to_pool(self, event: pg.event.Event):
         self._events.append(event)
@@ -112,6 +121,9 @@ class SceneManager:
                 self.current.on_redirect(new)
             self.current = new
 
+        if self.initialised:
+            self.current.call_after_init()
+
     def spawn_scene(self, scene_id: int | Type[Scene], silent: bool = False):
         if isinstance(scene_id, type) and issubclass(scene_id, Scene):
             return self.spawn_scene(scene_id.class_id)
@@ -145,3 +157,7 @@ class SceneManager:
 
         if self.current:
             self.current.init(*args, **kwargs)
+
+    def after_init(self):
+        if self.current and self.initialised:
+            self.current.call_after_init()

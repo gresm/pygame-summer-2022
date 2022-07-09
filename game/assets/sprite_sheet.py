@@ -1,3 +1,4 @@
+# sprite_sheet.py
 from .spritesheet_loader import load_sprite_sheet
 
 

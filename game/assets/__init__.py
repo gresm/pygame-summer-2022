@@ -1,3 +1,3 @@
 from .fonts import *
 from .images import *
-from .spritesheet import *
+from .sprite_sheet import *

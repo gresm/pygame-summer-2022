@@ -143,7 +143,7 @@ def test_wfc():
 
     rules.add(around_tile, inside_top, inside_bottom, inside_left, inside_right, inside_middle)
 
-    collapse = wfc.Collapse(Board2d(width, height, SuperpositionTile(set(rules.rules.keys()))), rules)
+    collapse = wfc.Collapse(Board2d(width, height, SuperpositionTile(rules.get_superpositions())), rules)
 
     inc = 0
 

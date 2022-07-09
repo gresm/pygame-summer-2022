@@ -163,6 +163,9 @@ class CollapseRules:
         self._side_increment_id += 1
         return ret
 
+    def get_superpositions(self):
+        return set(self.rules.keys())
+
     def resolve(self) -> dict[int, TileResolveDict]:
         ret = {}
 

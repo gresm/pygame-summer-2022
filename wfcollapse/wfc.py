@@ -23,7 +23,6 @@ class TileRule:
         self.right = right
         self.bottom = bottom
         self._can_finalize = True
-        self.cached: set[TileRule] = set()
         self.id = self.rules.add_tile_rule(self)
 
     def __str__(self):
@@ -51,8 +50,6 @@ class TileRule:
 
     def create(self, left: SideGroup, top: SideGroup, right: SideGroup, bottom: SideGroup) -> TileRule:
         ret = TileRule(self.rules, left, top, right, bottom)
-        self.cached.add(ret)
-        del self.rules.rules[ret.id]
         return ret
 
     def flip(self, x_axis: bool = False, y_axis: bool = False) -> TileRule:
@@ -74,15 +71,9 @@ class TileRule:
         return self.left.resolve(), self.top.resolve(), self.right.resolve(), self.bottom.resolve()
 
     def resolve(self):
-        ret = dict()
-
         if self._can_finalize:
-            ret[self.id] = self.resolve_self()
-
-        for rule in self.cached:
-            ret.update(rule.resolve())
-
-        return ret
+            return {self.id: self.resolve_self()}
+        return {}
 
     def rotate(self, by: int) -> TileRule:
         def rotate(num: int, rot_by: int) -> int:

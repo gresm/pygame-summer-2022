@@ -153,9 +153,9 @@ class SettingsMenu(BaseScene):
         if self.currently_selecting == 1:
             draw_line_under_rect(window, (255, 255, 255), self.music_rect)
         elif self.currently_selecting == 2:
-            draw_line_under_rect(window, (255, 255, 255), self.resolution_rect)
-        elif self.currently_selecting == 3:
             draw_line_under_rect(window, (255, 255, 255), self.credits_rect)
+        elif self.currently_selecting == 3:
+            draw_line_under_rect(window, (255, 255, 255), self.resolution_rect)
         elif self.currently_selecting == 4:
             draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
         elif self.currently_selecting == 5:
@@ -165,11 +165,11 @@ class SettingsMenu(BaseScene):
         for event in self.get_events():
             if event.type == pg.MOUSEBUTTONDOWN:
                 if self.currently_selecting == 1:
-                    pass
+                    self.manager.spawn_scene(MusicMenu)
                 elif self.currently_selecting == 2:
-                    pass  # self.manager.spawn_scene(ResolutionMenu)
-                elif self.currently_selecting == 3:
                     pass
+                elif self.currently_selecting == 3:
+                    self.manager.spawn_scene(ResolutionMenu)
                 elif self.currently_selecting == 4:
                     webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
                 elif self.currently_selecting == 5:
@@ -179,9 +179,9 @@ class SettingsMenu(BaseScene):
 
         if self.music_rect.collidepoint(mouse_pos):
             self.currently_selecting = 1
-        elif self.resolution_rect.collidepoint(mouse_pos):
-            self.currently_selecting = 2
         elif self.credits_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 2
+        elif self.resolution_rect.collidepoint(mouse_pos):
             self.currently_selecting = 3
         elif self.menu_text_rect.collidepoint(mouse_pos):
             self.currently_selecting = 4
@@ -189,6 +189,88 @@ class SettingsMenu(BaseScene):
             self.currently_selecting = 5
         else:
             self.currently_selecting = 0
+
+
+class ResolutionMenu(BaseScene):
+    menu_text: pg.Surface
+    menu_text_rect: pg.Rect
+    screen_rect: pg.Rect
+    widgets_rect: pg.Rect
+
+    resolution_rect: pg.Rect
+    resolution_text: pg.Surface
+
+    back_rect: pg.Rect
+    back_text: pg.Surface
+
+    currently_selecting: int
+
+    def init(self):
+        pg.display.set_caption("The Climb - Resolution", "The climb")
+        self.menu_text = assets.title_font.render("Resolution", True, (255, 255, 255))
+        self.resolution_text = assets.text_font.render("Resolution", True, (255, 255, 255))
+        self.back_text = assets.text_font.render("<- Back", True, (255, 255, 255))
+
+        self.menu_text_rect = self.menu_text.get_rect()
+        self.resolution_rect = self.resolution_text.get_rect()
+        self.back_rect = self.back_text.get_rect()
+
+        self.currently_selecting = 0
+
+    def after_init(self):
+        self.screen_rect = self.manager.game.screen.get_rect()
+        self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 400, 100)
+        self.menu_text_rect.midtop = pg.Vector2(self.screen_rect.midtop) + pg.Vector2(0, 20)
+        self.widgets_rect.midbottom = pg.Vector2(self.screen_rect.midbottom) - pg.Vector2(0, 50)
+
+        self.resolution_rect.center = self.widgets_rect.center
+
+    def draw(self, window: pg.Surface):
+        pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
+        pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
+
+        window.blit(self.menu_text, self.menu_text_rect)
+
+
+class MusicMenu(BaseScene):
+    menu_text: pg.Surface
+    menu_text_rect: pg.Rect
+    screen_rect: pg.Rect
+    widgets_rect: pg.Rect
+
+    music_rect: pg.Rect
+    music_text: pg.Surface
+
+    back_rect: pg.Rect
+    back_text: pg.Surface
+
+    currently_selecting: int
+
+    def init(self):
+        pg.display.set_caption("The Climb - Music", "The climb")
+        self.menu_text = assets.title_font.render("Music", True, (255, 255, 255))
+        self.music_text = assets.text_font.render("Music", True, (255, 255, 255))
+        self.back_text = assets.text_font.render("<- Back", True, (255, 255, 255))
+
+        self.menu_text_rect = self.menu_text.get_rect()
+        self.music_rect = self.music_text.get_rect()
+        self.back_rect = self.back_text.get_rect()
+
+        self.currently_selecting = 0
+
+    def after_init(self):
+        self.screen_rect = self.manager.game.screen.get_rect()
+        self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 400, 100)
+        self.menu_text_rect.midtop = pg.Vector2(self.screen_rect.midtop) + pg.Vector2(0, 20)
+        self.widgets_rect.midbottom = pg.Vector2(self.screen_rect.midbottom) - pg.Vector2(0, 50)
+
+        self.music_rect.center = self.widgets_rect.center
+
+    def draw(self, window: pg.Surface):
+        pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
+        pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
+
+        window.blit(self.menu_text, self.menu_text_rect)
 
 
 __all__ = ['MainMenu']

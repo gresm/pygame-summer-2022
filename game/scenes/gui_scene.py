@@ -91,7 +91,7 @@ class GUIScene(BaseScene):
 
     def on_event(self, event: pg.event.Event):
         if event.type == pg.MOUSEBUTTONDOWN:
-            if self.buttons[self.selected][1].collidepoint(event.pos):
+            if self.selected in self.buttons and self.buttons[self.selected][1].collidepoint(event.pos):
                 self.option_selected(self.selected)
 
     def update(self, dt: float):

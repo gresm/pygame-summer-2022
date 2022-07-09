@@ -1,10 +1,6 @@
 import pygame as pg
-from gamelib import BaseScene
+from .gui_scene import GUIScene
 
 
-def draw_line_under_rect(surface: pg.Surface, color: tuple[int, int, int], rect: pg.Rect):
-    pg.draw.line(surface, color, rect.bottomleft, rect.bottomright)
-
-
-class CreditsMenu(BaseScene):
+class CreditsMenu(GUIScene):
     pass

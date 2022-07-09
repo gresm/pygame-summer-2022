@@ -134,7 +134,7 @@ def test_wfc():
     around = wfc.SideGroup(rules)
     inside = wfc.SideGroup(rules)
 
-    around_tile = wfc.TileRule(rules, around, around, around, around)
+    around_tile = wfc.TileRule(rules, around, around, around, around, 10)
     inside_top = wfc.TileRule(rules, around, around, around, inside)
     inside_bottom = wfc.TileRule(rules, around, inside, around, around)
     inside_left = wfc.TileRule(rules, around, around, inside, around)

@@ -19,14 +19,17 @@ class SideGroup:
 
 
 class TileRule:
-    def __init__(self, rules: CollapseRules, left: SideGroup, top: SideGroup, right: SideGroup, bottom: SideGroup):
+    def __init__(self, rules: CollapseRules, left: SideGroup, top: SideGroup, right: SideGroup, bottom: SideGroup,
+                 global_chance: int = 1):
         self.rules = rules
         self.left = left
         self.top = top
         self.right = right
         self.bottom = bottom
         self._can_finalize = True
+        self.global_chance = global_chance
         self.id = self.rules.add_tile_rule(self)
+        self.global_pollute_table = [self.id] * self.global_chance
 
     def __str__(self):
         return f'{self.left}, {self.top}, {self.right}, {self.bottom}'
@@ -73,9 +76,9 @@ class TileRule:
     def resolve_self(self):
         return self.left.resolve(), self.top.resolve(), self.right.resolve(), self.bottom.resolve()
 
-    def resolve(self) -> dict[int, tuple[int, int, int, int]]:
+    def resolve(self) -> dict[int, dict[str, tuple[int, int, int, int] | list[int]]]:
         if self._can_finalize:
-            return {self.id: self.resolve_self()}
+            return {self.id: {"sides": self.resolve_self(), "global-chance": self.global_pollute_table}}
         return {}
 
     def rotate(self, by: int) -> TileRule:
@@ -123,7 +126,7 @@ class CollapseRules:
         self._side_increment_id += 1
         return ret
 
-    def resolve(self) -> dict[int, tuple[int, int, int, int]]:
+    def resolve(self) -> dict[int, dict[str, tuple[int, int, int, int] | list[int]]]:
         ret = {}
 
         for rule in self.rules:
@@ -151,15 +154,22 @@ class Collapse(WFCAbstract):
 
         for superposition in tile.tile.superpositions:
             for opposed_superposition in compare_with.tile.superpositions:
-                if self.rules[superposition][side] == self.rules[opposed_superposition][compare_side]:
+                if self.rules[superposition]["sides"][side] == self.rules[opposed_superposition]["sides"][compare_side]:
                     to_keep.add(superposition)
 
         return to_keep
 
+    def get_tile_chances(self, tile_type: BoardTile[SuperpositionTile]) -> list[int]:
+        ret: list[int] = []
+        for tile_superpositions in tile_type.tile.superpositions:
+            ret += self.rules[tile_superpositions]["global-chance"]
+
+        return ret
+
     def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
         if not tile.tile.collapsed:
             self.reduce_tile(tile)
-            tile.tile.superpositions = {choice(list(tile.tile.superpositions))}
+            tile.tile.superpositions = {choice(self.get_tile_chances(tile))}
 
     def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
         for side in range(4):

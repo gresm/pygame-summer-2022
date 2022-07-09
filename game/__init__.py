@@ -1,6 +1,6 @@
 import pygame as pg
 
-from gamelib import get_game, scene_manager
+from gamelib import get_game, scene_manager, SoundManager
 from . import constants
 from .scenes import MainMenu
 
@@ -9,7 +9,8 @@ pg.init()
 
 game = get_game((constants.WIDTH, constants.HEIGHT), constants.MAX_FPS)
 
-scene_manager.init(game)
+mixer = SoundManager()
+scene_manager.init(game, mixer)
 scene_manager.spawn_scene(MainMenu)
 
 

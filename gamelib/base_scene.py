@@ -6,6 +6,7 @@ import pygame as pg
 
 from .window import GameState
 from .scene_tools import FrameCounter
+from .sound_manager import SoundManager
 
 
 class SceneException(Exception):
@@ -84,6 +85,7 @@ class Scene:
 class SceneManager:
     game: GameState
     global_counter: FrameCounter
+    mixer: SoundManager
 
     def __init__(self):
         self.current: Scene | None = None
@@ -150,8 +152,9 @@ class SceneManager:
         self.current.add_event_to_pool(event)
         self.current.on_event(event)
 
-    def init(self, game: GameState, *args, **kwargs):
+    def init(self, game: GameState, mixer: SoundManager, *args, **kwargs):
         self.game = game
+        self.mixer = mixer
         self.game.on_start = self.after_init
         self.global_counter = FrameCounter(self.game.max_fps)
         self.initialised = True

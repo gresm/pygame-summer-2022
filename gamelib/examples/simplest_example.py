@@ -2,7 +2,7 @@
 Simplest example of the use of the library.
 """
 import pygame as pg
-from .. import get_game, scene_manager, BaseScene
+from .. import get_game, scene_manager, BaseScene, SoundManager
 
 
 class MyScene(BaseScene):
@@ -10,7 +10,8 @@ class MyScene(BaseScene):
 
 
 game = get_game()
-scene_manager.init(game)
+mixer = SoundManager()
+scene_manager.init(game, mixer)
 scene_manager.spawn_scene(MyScene)
 
 

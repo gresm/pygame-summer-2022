@@ -5,9 +5,12 @@ from warnings import warn
 import pygame as pg
 
 
+ChannelClass = type(pg.mixer.Channel(0))
+
+
 class SoundManager:
     def __init__(
-            self, sounds: dict[str, pg.mixer.Sound], bgm_channel: int | pg.mixer.Channel | None = None,
+            self, sounds: dict[str, pg.mixer.Sound] | None = None, bgm_channel: int | pg.mixer.Channel | None = None,
             sfx_channel: int | pg.mixer.Channel | None = None
     ):
         if bgm_channel is None:
@@ -15,14 +18,14 @@ class SoundManager:
         if sfx_channel is None:
             sfx_channel = pg.mixer.find_channel(False)
 
-        self.bgm_channel = bgm_channel if isinstance(bgm_channel, pg.mixer.Channel) else pg.mixer.Channel(bgm_channel)
-        self.sfx_channel = sfx_channel if isinstance(sfx_channel, pg.mixer.Channel) else pg.mixer.Channel(sfx_channel)
+        self.bgm_channel = bgm_channel if isinstance(bgm_channel, ChannelClass) else pg.mixer.Channel(bgm_channel)
+        self.sfx_channel = sfx_channel if isinstance(sfx_channel, ChannelClass) else pg.mixer.Channel(sfx_channel)
         self._global_volume = 1.0
         self.bgm_channel.set_volume(self.global_volume)
         self.sfx_channel.set_volume(self.global_volume)
 
         self._background_music_on = False
-        self.sounds: dict[str, pg.mixer.Sound] = sounds
+        self.sounds: dict[str, pg.mixer.Sound] = sounds if sounds is not None else {}
         self.background_music: pg.mixer.Sound | None = None
 
     @property
@@ -68,6 +71,9 @@ class SoundManager:
                 warn(f"Sound \"{sfx}\" not found in sounds dict.")
             sfx = self.sounds[sfx]
         self.sfx_channel.play(sfx)
+
+    def add_sfx(self, name: str, sound: pg.mixer.Sound):
+        self.sounds[name] = sound
 
 
 __all__ = ["SoundManager"]

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .board import Board2d, BoardTile
+from .superposition_tile import SuperpositionTile
 from .wfc_abstract import WFCAbstract
 
 
@@ -70,7 +72,7 @@ class TileRule:
     def resolve_self(self):
         return self.left.resolve(), self.top.resolve(), self.right.resolve(), self.bottom.resolve()
 
-    def resolve(self):
+    def resolve(self) -> dict[int, tuple[int, int, int, int]]:
         if self._can_finalize:
             return {self.id: self.resolve_self()}
         return {}
@@ -114,7 +116,7 @@ class CollapseRules:
         self._side_increment_id += 1
         return ret
 
-    def resolve(self):
+    def resolve(self) -> dict[int, tuple[int, int, int, int]]:
         ret = {}
 
         for rule in self.rules:
@@ -123,5 +125,27 @@ class CollapseRules:
         return ret
 
 
-class Collapse:
-    pass
+class Collapse(WFCAbstract):
+    def __init__(self, board: Board2d[SuperpositionTile], rules: CollapseRules):
+        super().__init__(board)
+        self.rules = rules.resolve()
+
+    @staticmethod
+    def _opposite_side(side: int) -> int:
+        return (side + 2) % 4
+
+    def _reduce_tile_by_side(self, tile: BoardTile[SuperpositionTile], side: int) -> set[int]:
+        compare_with = tile.neighbour_by_side(side)
+        compare_side = self._opposite_side(side)
+
+        to_keep: set[int] = set()
+
+        for superposition in tile.tile.superpositions:
+            for opposed_superposition in compare_with.tile.superpositions:
+                if self.rules[superposition][side] == self.rules[opposed_superposition][compare_side]:
+                    to_keep.add(superposition)
+
+        return to_keep
+
+    def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
+        pass

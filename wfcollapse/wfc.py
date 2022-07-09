@@ -102,6 +102,12 @@ class CollapseRules:
         self._side_increment_id = 0
         self._rules_increment_id = 0
 
+    def add(self, *tiles: TileRule):
+        """
+        Pretend to add list of tiles to the rules, in reality do nothing.
+        """
+        pass
+
     def add_tile_rule(self, rule: TileRule) -> int:
         rule_id = self.create_rule_id()
         self.rules[rule_id] = rule
@@ -137,6 +143,8 @@ class Collapse(WFCAbstract):
 
     def _reduce_tile_by_side(self, tile: BoardTile[SuperpositionTile], side: int) -> set[int]:
         compare_with = tile.neighbour_by_side(side)
+        if compare_with is None:
+            return tile.tile.superpositions
         compare_side = self._opposite_side(side)
 
         to_keep: set[int] = set()
@@ -149,7 +157,9 @@ class Collapse(WFCAbstract):
         return to_keep
 
     def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
-        tile.tile.superpositions = choice(list(tile.tile.superpositions))
+        if not tile.tile.collapsed:
+            self.reduce_tile(tile)
+            tile.tile.superpositions = {choice(list(tile.tile.superpositions))}
 
     def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
         for side in range(4):

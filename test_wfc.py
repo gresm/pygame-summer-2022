@@ -5,8 +5,7 @@ import time
 
 from wfcollapse.board import Board2d, BoardTile
 from wfcollapse.superposition_tile import SuperpositionTile
-from wfcollapse import simple_wfc
-from wfcollapse import wfc_old
+from wfcollapse import simple_wfc, wfc_old, wfc
 from argparse import ArgumentParser
 
 if __name__ != '__main__':
@@ -22,6 +21,7 @@ colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (0, 255, 0), (255, 255, 0), (25
           (128, 128, 128), (128, 0, 0), (0, 128, 0), (0, 0, 128), (128, 128, 0), (128, 0, 128),
           (0, 128, 128), (128, 128, 128)]
 simple_colors = [colors[2], colors[4], colors[1], colors[0]]
+wfc_colors = [colors[0], *[colors[1]] * 7]
 
 
 def draw_board(colors_list: list[tuple[int, int, int]], board: list[list[BoardTile[SuperpositionTile]]], states: int,
@@ -128,8 +128,44 @@ def test_old_wfc():
     draw_board(colors, collapse.board.board, 4, 2)
 
 
+def test_wfc():
+    rules = wfc.CollapseRules()
+
+    around = wfc.SideGroup(rules)
+    inside = wfc.SideGroup(rules)
+
+    around_tile = wfc.TileRule(rules, around, around, around, around)
+    inside_top = wfc.TileRule(rules, around, around, around, inside)
+    inside_bottom = wfc.TileRule(rules, around, inside, around, around)
+    inside_left = wfc.TileRule(rules, around, around, inside, around)
+    inside_right = wfc.TileRule(rules, inside, around, around, around)
+    inside_middle = wfc.TileRule(rules, inside, inside, inside, inside)
+
+    rules.add(around_tile, inside_top, inside_bottom, inside_left, inside_right, inside_middle)
+
+    collapse = wfc.Collapse(Board2d(width, height, SuperpositionTile(set(rules.rules.keys()))), rules)
+
+    inc = 0
+
+    for step in collapse.solve():
+        board = [[False for _ in range(collapse.board.width)] for _ in range(collapse.board.height)]
+        for pos in step:
+            if not immediate:
+                board[pos[0]][pos[1]] = True
+                frame()
+                draw_board(wfc_colors, collapse.board.board, 9, 3, pos)
+                print("step: ", inc)
+                print("visited: ")
+                draw_visits_board(board)
+        inc += 1
+
+    if not immediate:
+        frame()
+    draw_board(wfc_colors, collapse.board.board, 9, 3)
+
+
 try:
-    tests = [test_simple_wfc, test_old_wfc]
+    tests = [test_simple_wfc, test_old_wfc, test_wfc]
     tests[args.algo]()
 except KeyboardInterrupt:
     print("Interrupted, exiting...")

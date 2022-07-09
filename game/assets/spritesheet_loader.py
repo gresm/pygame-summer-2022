@@ -133,3 +133,6 @@ def load_sprite_sheet(name: str) -> SpriteSheet:
     with config.open("r") as config_file:
         data = json.load(config_file)
     return SpriteSheet(pg.image.load(str(image)), data)
+
+
+__all__ = ["load_sprite_sheet"]

@@ -9,3 +9,6 @@ with open(images_config_file, "r") as f:
     images_config = json.load(f)
 
 images = {name: pg.image.load(str(images_folder / file)) for name, file in images_config.items()}
+
+
+__all__ = ["images"]

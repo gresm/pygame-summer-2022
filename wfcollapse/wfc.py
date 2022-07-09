@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from random import choice
 from .board import Board2d, BoardTile
 from .superposition_tile import SuperpositionTile
 from .wfc_abstract import WFCAbstract
@@ -147,5 +148,12 @@ class Collapse(WFCAbstract):
 
         return to_keep
 
+    def collapse_tile(self, tile: BoardTile[SuperpositionTile]):
+        tile.tile.superpositions = choice(list(tile.tile.superpositions))
+
     def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
-        pass
+        for side in range(4):
+            tile.tile.superpositions = self._reduce_tile_by_side(tile, side)
+
+    def select_tile_to_collapse(self, tiles: set[BoardTile[SuperpositionTile]]) -> BoardTile[SuperpositionTile]:
+        return choice(list(tiles))

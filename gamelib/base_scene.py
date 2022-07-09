@@ -152,6 +152,7 @@ class SceneManager:
 
     def init(self, game: GameState, *args, **kwargs):
         self.game = game
+        self.game.on_start = self.after_init
         self.global_counter = FrameCounter(self.game.max_fps)
         self.initialised = True
 

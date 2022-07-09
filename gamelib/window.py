@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Optional
 from warnings import warn
 
 import pygame as pg
@@ -18,9 +18,14 @@ class GameState:
         self.running = False
         self._frame: Callable[[pg.Surface, float], ...] | None = None
         self.size = screen_size
+        self.on_start: Optional[Callable] = None
 
-    def init(self):
-        self.screen = pg.display.set_mode(self.size)
+    def init(self, screen: pg.Surface | None = None):
+        if screen is None:
+            self.screen = pg.display.set_mode(self.size)
+        else:
+            self.screen = screen
+            self.size = screen.get_size()
         self.running = True
 
     def stop(self):
@@ -31,6 +36,8 @@ class GameState:
         return func
 
     def run(self):
+        if self.on_start is not None:
+            self.on_start()
         while self.running:
             if self._frame is not None:
                 if max_fps != -1:

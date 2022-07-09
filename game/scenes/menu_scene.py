@@ -76,7 +76,7 @@ class MainMenu(BaseScene):
                 if self.currently_selecting == 1:
                     pass
                 elif self.currently_selecting == 2:
-                    pass
+                    self.manager.spawn_scene(SettingsMenu)
                 elif self.currently_selecting == 3:
                     self.manager.spawn_scene(QuitScene)
                 elif self.currently_selecting == 4:
@@ -87,6 +87,89 @@ class MainMenu(BaseScene):
         elif self.settings_rect.collidepoint(mouse_pos):
             self.currently_selecting = 2
         elif self.quit_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 3
+        elif self.menu_text_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 4
+        else:
+            self.currently_selecting = 0
+
+
+class SettingsMenu(BaseScene):
+    menu_text: pg.Surface
+    menu_text_rect: pg.Rect
+    screen_rect: pg.Rect
+    widgets_rect: pg.Rect
+
+    fullscreen_rect: pg.Rect
+    fullscreen_text: pg.Surface
+
+    resolution_rect: pg.Rect
+    resolution_text: pg.Surface
+
+    back_rect: pg.Rect
+    back_text: pg.Surface
+
+    currently_selecting: int
+
+    def init(self):
+        pg.display.set_caption("The Climb - Settings", "The climb")
+        self.menu_text = assets.title_font.render("Settings", True, (255, 255, 255))
+        self.fullscreen_text = assets.text_font.render("Fullscreen", True, (255, 255, 255))
+        self.resolution_text = assets.text_font.render("Resolution", True, (255, 255, 255))
+        self.back_text = assets.text_font.render("<- Back", True, (255, 255, 255))
+
+        self.menu_text_rect = self.menu_text.get_rect()
+        self.fullscreen_rect = self.fullscreen_text.get_rect()
+        self.resolution_rect = self.resolution_text.get_rect()
+        self.back_rect = self.back_text.get_rect()
+
+        self.currently_selecting = 0
+
+    def after_init(self):
+        self.screen_rect = self.manager.game.screen.get_rect()
+        self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 400, 100)
+        self.menu_text_rect.midtop = pg.Vector2(self.screen_rect.midtop) + pg.Vector2(0, 20)
+        self.widgets_rect.midbottom = pg.Vector2(self.screen_rect.midbottom) - pg.Vector2(0, 50)
+
+        self.fullscreen_rect.midleft = pg.Vector2(self.widgets_rect.midleft) + pg.Vector2(50, 0)
+        self.resolution_rect.midright = pg.Vector2(self.widgets_rect.midright) - pg.Vector2(50, 0)
+
+    def draw(self, window: pg.Surface):
+        pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
+        pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
+
+        window.blit(self.menu_text, self.menu_text_rect)
+        window.blit(self.fullscreen_text, self.fullscreen_rect)
+        window.blit(self.resolution_text, self.resolution_rect)
+        window.blit(self.back_text, self.back_rect)
+
+        if self.currently_selecting == 1:
+            draw_line_under_rect(window, (255, 255, 255), self.fullscreen_rect)
+        elif self.currently_selecting == 2:
+            draw_line_under_rect(window, (255, 255, 255), self.resolution_rect)
+        elif self.currently_selecting == 3:
+            draw_line_under_rect(window, (255, 255, 255), self.back_rect)
+        elif self.currently_selecting == 4:
+            draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
+
+    def update(self, delta_time: float):
+        for event in self.get_events():
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if self.currently_selecting == 1:
+                    pass
+                elif self.currently_selecting == 2:
+                    pass
+                    # self.manager.spawn_scene(ResolutionMenu)
+                elif self.currently_selecting == 3:
+                    self.manager.spawn_scene(MainMenu)
+                elif self.currently_selecting == 4:
+                    webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        mouse_pos = pg.mouse.get_pos()
+        if self.fullscreen_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 1
+        elif self.resolution_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 2
+        elif self.back_rect.collidepoint(mouse_pos):
             self.currently_selecting = 3
         elif self.menu_text_rect.collidepoint(mouse_pos):
             self.currently_selecting = 4

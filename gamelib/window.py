@@ -19,14 +19,21 @@ class GameState:
         self._frame: Callable[[pg.Surface, float], ...] | None = None
         self.size = screen_size
         self.on_start: Optional[Callable] = None
+        self.is_display: bool = False
 
     def init(self, screen: pg.Surface | None = None):
         if screen is None:
+            self.is_display = True
             self.screen = pg.display.set_mode(self.size)
         else:
+            self.is_display = False
             self.screen = screen
             self.size = screen.get_size()
         self.running = True
+
+    def set_flags(self, flags: int):
+        if self.is_display:
+            self.screen = pg.display.set_mode(self.size, flags)
 
     def stop(self):
         self.running = False

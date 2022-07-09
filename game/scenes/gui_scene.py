@@ -86,6 +86,12 @@ class GUIScene(BaseScene):
             self.buttons[button] = self.disabled_buttons[button]
             del self.disabled_buttons[button]
 
+    def toggle_button(self, button: str):
+        if button in self.buttons:
+            self.disable_button(button)
+        else:
+            self.enable_button(button)
+
     def after_init(self):
         self.screen_rect = self.manager.game.screen.get_rect()
 

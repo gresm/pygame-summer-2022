@@ -143,7 +143,7 @@ class Collapse(WFCAbstract):
 
     def _reduce_tile_by_side(self, tile: BoardTile[SuperpositionTile], side: int) -> set[int]:
         compare_with = tile.neighbour_by_side(side)
-        if compare_with is None:
+        if compare_with is None or compare_with.tile.unsolvable:
             return tile.tile.superpositions
         compare_side = self._opposite_side(side)
 

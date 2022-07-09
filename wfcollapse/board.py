@@ -15,6 +15,18 @@ class BoardTile:
         ret.discard(None)
         return ret
 
+    def neighbour_by_side(self, side: int):
+        if side == 0:
+            return self.left
+        elif side == 1:
+            return self.up
+        elif side == 2:
+            return self.right
+        elif side == 3:
+            return self.down
+        else:
+            raise ValueError(f"Invalid side: {side}")
+
     @property
     def left(self):
         return self.board.tile_at(self.x - 1, self.y)

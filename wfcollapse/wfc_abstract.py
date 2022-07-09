@@ -16,7 +16,7 @@ class WFCAbstract(ABC):
         self.board = board
 
     @abstractmethod
-    def reduce_tile(self, tile: BoardTile[SuperpositionTile]):
+    def reduce_tile(self, tile: BoardTile[SuperpositionTile]) -> bool:
         """
         Reduce superpositions of the tile.
         """

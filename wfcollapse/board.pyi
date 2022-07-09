@@ -25,6 +25,8 @@ class BoardTile(Generic[_T2]):
 
     def neighbours(self) -> set[BoardTile[_T2]]: ...
 
+    def neighbour_by_side(self, side: int) -> BoardTile[_T2]: ...
+
 
 class Board2d(Generic[_T]):
     board: list[list[BoardTile[_T]]]

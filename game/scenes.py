@@ -42,9 +42,9 @@ class MainMenu(BaseScene):
 
     def after_init(self):
         self.screen_rect = self.manager.game.screen.get_rect()
-        self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 200, 100)
-        self.menu_text_rect.midbottom = pg.Vector2(self.screen_rect.midbottom) - pg.Vector2(0, 20)
-        self.widgets_rect.midbottom = pg.Vector2(self.menu_text_rect.midtop) - pg.Vector2(0, 20)
+        self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 400, 100)
+        self.menu_text_rect.midtop = pg.Vector2(self.screen_rect.midtop) + pg.Vector2(0, 20)
+        self.widgets_rect.midbottom = pg.Vector2(self.screen_rect.midbottom) - pg.Vector2(0, 50)
 
         self.play_rect.midleft = pg.Vector2(self.widgets_rect.midleft) + pg.Vector2(50, 0)
         self.settings_rect.center = self.widgets_rect.center

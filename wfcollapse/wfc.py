@@ -197,12 +197,19 @@ class Collapse(WFCAbstract):
         return to_keep
 
     def _side_chance_creator(self, chances: list[int], tile: int, side_tile: int, side: int):
-        pass
+        if side_tile in self.rules[tile]["neighbour_probability"][side]:
+            chances += self.rules[tile]["neighbour_probability"][side][side_tile]
 
     def get_tile_chances(self, tile_type: BoardTile[SuperpositionTile]) -> list[int]:
         ret: list[int] = []
         for tile_superpositions in tile_type.tile.superpositions:
             ret += self.rules[tile_superpositions]["global_chance"]
+
+            for side, neighbour in enumerate(tile_type.unfiltered_neighbours()):
+                if neighbour is None:
+                    continue
+                for super_pos in neighbour.tile.superpositions:
+                    self._side_chance_creator(ret, tile_superpositions, super_pos, side)
 
         return ret
 

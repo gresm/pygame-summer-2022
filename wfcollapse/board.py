@@ -27,6 +27,9 @@ class BoardTile:
         else:
             raise ValueError(f"Invalid side: {side}")
 
+    def unfiltered_neighbours(self):
+        return [self.left, self.right, self.up, self.down]
+
     @property
     def left(self):
         return self.board.tile_at(self.x - 1, self.y)

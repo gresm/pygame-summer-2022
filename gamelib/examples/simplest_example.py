@@ -1,16 +1,17 @@
+"""
+Simplest example of the use of the library.
+"""
 import pygame as pg
-
-from gamelib import get_game, scene_manager
-from . import constants
-from .scenes import MainMenu
+from .. import get_game, scene_manager, BaseScene
 
 
-pg.init()
+class MyScene(BaseScene):
+    pass
 
-game = get_game((constants.WIDTH, constants.HEIGHT), constants.MAX_FPS)
 
+game = get_game()
 scene_manager.init(game)
-scene_manager.spawn_scene(MainMenu)
+scene_manager.spawn_scene(MyScene)
 
 
 @game.frame
@@ -33,3 +34,7 @@ def frame(window: pg.Surface, delta_time: float):
 def main():
     game.init()
     game.run()
+
+
+if __name__ == '__main__':
+    main()

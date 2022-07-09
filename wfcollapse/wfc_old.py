@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Iterable, Union
 from random import choice
 from .wfc_abstract import WFCAbstract
 from .board import Board2d, BoardTile

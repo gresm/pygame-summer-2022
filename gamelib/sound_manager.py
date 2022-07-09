@@ -68,3 +68,6 @@ class SoundManager:
                 warn(f"Sound \"{sfx}\" not found in sounds dict.")
             sfx = self.sounds[sfx]
         self.sfx_channel.play(sfx)
+
+
+__all__ = ["SoundManager"]

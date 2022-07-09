@@ -1,12 +1,11 @@
 import pygame as pg
 from gamelib import BaseScene
 
-from . import assets
+from .. import assets
 
 
-class QuitScene(BaseScene):
-    def after_init(self):
-        self.manager.game.stop()
+def draw_line_under_rect(surface: pg.Surface, color: tuple[int, int, int], rect: pg.Rect):
+    pg.draw.line(surface, color, rect.bottomleft, rect.bottomright)
 
 
 class MainMenu(BaseScene):
@@ -50,10 +49,6 @@ class MainMenu(BaseScene):
         self.settings_rect.center = self.widgets_rect.center
         self.quit_rect.midright = pg.Vector2(self.widgets_rect.midright) - pg.Vector2(50, 0)
 
-    @staticmethod
-    def _draw_line_under_rect(surface: pg.Surface, color: tuple[int, int, int], rect: pg.Rect):
-        pg.draw.line(surface, color, rect.bottomleft, rect.bottomright)
-
     def draw(self, window: pg.Surface):
         window.fill((0, 0, 0))
         pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
@@ -65,13 +60,13 @@ class MainMenu(BaseScene):
         window.blit(self.quit_text, self.quit_rect)
 
         if self.currently_selecting == 1:
-            self._draw_line_under_rect(window, (255, 255, 255), self.play_rect)
+            draw_line_under_rect(window, (255, 255, 255), self.play_rect)
         elif self.currently_selecting == 2:
-            self._draw_line_under_rect(window, (255, 255, 255), self.settings_rect)
+            draw_line_under_rect(window, (255, 255, 255), self.settings_rect)
         elif self.currently_selecting == 3:
-            self._draw_line_under_rect(window, (255, 255, 255), self.quit_rect)
+            draw_line_under_rect(window, (255, 255, 255), self.quit_rect)
         elif self.currently_selecting == 4:
-            self._draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
+            draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
 
     def update(self, delta_time: float):
         mouse_pos = pg.mouse.get_pos()

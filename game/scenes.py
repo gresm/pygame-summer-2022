@@ -56,7 +56,8 @@ class MainMenu(BaseScene):
 
     def draw(self, window: pg.Surface):
         window.fill((0, 0, 0))
-        pg.draw.rect(window, (255, 0, 255), self.widgets_rect)
+        pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
+        pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
 
         window.blit(self.menu_text, self.menu_text_rect)
         window.blit(self.play_text, self.play_rect)
@@ -71,6 +72,19 @@ class MainMenu(BaseScene):
             self._draw_line_under_rect(window, (255, 255, 255), self.quit_rect)
         elif self.currently_selecting == 4:
             self._draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
+
+    def update(self, delta_time: float):
+        mouse_pos = pg.mouse.get_pos()
+        if self.play_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 1
+        elif self.settings_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 2
+        elif self.quit_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 3
+        elif self.menu_text_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 4
+        else:
+            self.currently_selecting = 0
 
 
 __all__ = ['MainMenu']

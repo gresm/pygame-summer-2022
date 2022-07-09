@@ -200,16 +200,19 @@ class ResolutionMenu(BaseScene):
 
     full_screen_text: pg.Surface
     full_screen_toggled_text: pg.Surface
+    full_screen_toggled_rect: pg.Rect
     full_screen_rect: pg.Rect
     is_full_screen: bool
 
     no_frame_text: pg.Surface
     no_frame_toggled_text: pg.Surface
+    no_frame_toggled_rect: pg.Rect
     no_frame_rect: pg.Rect
     is_no_frame: bool
 
     scaled_text: pg.Surface
     scaled_toggled_text: pg.Surface
+    scaled_toggled_rect: pg.Rect
     scaled_rect: pg.Rect
     is_scaled: bool
 
@@ -233,14 +236,17 @@ class ResolutionMenu(BaseScene):
 
         self.full_screen_text = assets.text_font.render("Full Screen", True, (255, 255, 255))
         self.full_screen_toggled_text = assets.text_font.render("Windowed", True, (255, 255, 255))
+        self.full_screen_toggled_rect = self.full_screen_toggled_text.get_rect()
         self.full_screen_rect = self.full_screen_text.get_rect()
 
         self.no_frame_text = assets.text_font.render("No Frame", True, (255, 255, 255))
         self.no_frame_toggled_text = assets.text_font.render("Frame", True, (255, 255, 255))
+        self.no_frame_toggled_rect = self.no_frame_toggled_text.get_rect()
         self.no_frame_rect = self.no_frame_text.get_rect()
 
         self.scaled_text = assets.text_font.render("Scaled", True, (255, 255, 255))
         self.scaled_toggled_text = assets.text_font.render("Unscaled", True, (255, 255, 255))
+        self.scaled_toggled_rect = self.scaled_toggled_text.get_rect()
         self.scaled_rect = self.scaled_text.get_rect()
 
         self.back_text = assets.text_font.render("<- Back", True, (255, 255, 255))
@@ -262,6 +268,10 @@ class ResolutionMenu(BaseScene):
         self.no_frame_rect.center = self.widgets_rect.center
         self.scaled_rect.midright = pg.Vector2(self.widgets_rect.midright) - pg.Vector2(50, 0)
         self.apply_rect.right = self.screen_rect.right - 10
+
+        self.full_screen_toggled_rect.center = self.full_screen_rect.center
+        self.no_frame_toggled_rect.center = self.no_frame_rect.center
+        self.scaled_toggled_rect.center = self.scaled_rect.center
 
     def draw(self, window: pg.Surface):
         pg.draw.rect(window, (0, 0, 0), self.widgets_rect)
@@ -302,14 +312,21 @@ class ResolutionMenu(BaseScene):
         for event in self.get_events():
             if event.type == pg.MOUSEBUTTONDOWN:
                 if self.currently_selecting == 1:
-                    self.full_screen_text, self.full_screen_toggled_text = self.full_screen_toggled_text, \
-                                                                           self.full_screen_text
+                    self.full_screen_text, self.full_screen_toggled_text = (
+                        self.full_screen_toggled_text, self.full_screen_text
+                    )
+
+                    self.full_screen_rect, self.full_screen_toggled_rect = (
+                        self.full_screen_toggled_rect, self.full_screen_rect
+                    )
                     self.is_full_screen = not self.is_full_screen
                 elif self.currently_selecting == 2:
                     self.no_frame_text, self.no_frame_toggled_text = self.no_frame_toggled_text, self.no_frame_text
+                    self.no_frame_rect, self.no_frame_toggled_rect = self.no_frame_toggled_rect, self.no_frame_rect
                     self.is_no_frame = not self.is_no_frame
                 elif self.currently_selecting == 3:
                     self.scaled_text, self.scaled_toggled_text = self.scaled_toggled_text, self.scaled_text
+                    self.scaled_rect, self.scaled_toggled_rect = self.scaled_toggled_rect, self.scaled_rect
                     self.is_scaled = not self.is_scaled
                 elif self.currently_selecting == 4:
                     pass

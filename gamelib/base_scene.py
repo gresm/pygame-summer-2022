@@ -54,7 +54,7 @@ class Scene:
         pass
 
     def call_after_init(self):
-        if not self.initialised:
+        if not self.initialised and self.manager.game.running:
             self.after_init()
             self.initialised = True
 
@@ -160,5 +160,5 @@ class SceneManager:
             self.current.init(*args, **kwargs)
 
     def after_init(self):
-        if self.current and self.initialised:
+        if self.current:
             self.current.call_after_init()

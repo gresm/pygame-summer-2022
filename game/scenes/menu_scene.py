@@ -100,8 +100,8 @@ class SettingsMenu(BaseScene):
     screen_rect: pg.Rect
     widgets_rect: pg.Rect
 
-    fullscreen_rect: pg.Rect
-    fullscreen_text: pg.Surface
+    music_rect: pg.Rect
+    music_text: pg.Surface
 
     resolution_rect: pg.Rect
     resolution_text: pg.Surface
@@ -109,17 +109,22 @@ class SettingsMenu(BaseScene):
     back_rect: pg.Rect
     back_text: pg.Surface
 
+    credits_rect: pg.Rect
+    credits_text: pg.Surface
+
     currently_selecting: int
 
     def init(self):
         pg.display.set_caption("The Climb - Settings", "The climb")
         self.menu_text = assets.title_font.render("Settings", True, (255, 255, 255))
-        self.fullscreen_text = assets.text_font.render("Fullscreen", True, (255, 255, 255))
+        self.music_text = assets.text_font.render("Sound", True, (255, 255, 255))
         self.resolution_text = assets.text_font.render("Resolution", True, (255, 255, 255))
+        self.credits_text = assets.text_font.render("Credits", True, (255, 255, 255))
         self.back_text = assets.text_font.render("<- Back", True, (255, 255, 255))
 
         self.menu_text_rect = self.menu_text.get_rect()
-        self.fullscreen_rect = self.fullscreen_text.get_rect()
+        self.music_rect = self.music_text.get_rect()
+        self.credits_rect = self.credits_text.get_rect()
         self.resolution_rect = self.resolution_text.get_rect()
         self.back_rect = self.back_text.get_rect()
 
@@ -131,7 +136,8 @@ class SettingsMenu(BaseScene):
         self.menu_text_rect.midtop = pg.Vector2(self.screen_rect.midtop) + pg.Vector2(0, 20)
         self.widgets_rect.midbottom = pg.Vector2(self.screen_rect.midbottom) - pg.Vector2(0, 50)
 
-        self.fullscreen_rect.midleft = pg.Vector2(self.widgets_rect.midleft) + pg.Vector2(50, 0)
+        self.credits_rect.center = self.widgets_rect.center
+        self.music_rect.midleft = pg.Vector2(self.widgets_rect.midleft) + pg.Vector2(50, 0)
         self.resolution_rect.midright = pg.Vector2(self.widgets_rect.midright) - pg.Vector2(50, 0)
 
     def draw(self, window: pg.Surface):
@@ -139,18 +145,21 @@ class SettingsMenu(BaseScene):
         pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
 
         window.blit(self.menu_text, self.menu_text_rect)
-        window.blit(self.fullscreen_text, self.fullscreen_rect)
+        window.blit(self.music_text, self.music_rect)
+        window.blit(self.credits_text, self.credits_rect)
         window.blit(self.resolution_text, self.resolution_rect)
         window.blit(self.back_text, self.back_rect)
 
         if self.currently_selecting == 1:
-            draw_line_under_rect(window, (255, 255, 255), self.fullscreen_rect)
+            draw_line_under_rect(window, (255, 255, 255), self.music_rect)
         elif self.currently_selecting == 2:
             draw_line_under_rect(window, (255, 255, 255), self.resolution_rect)
         elif self.currently_selecting == 3:
-            draw_line_under_rect(window, (255, 255, 255), self.back_rect)
+            draw_line_under_rect(window, (255, 255, 255), self.credits_rect)
         elif self.currently_selecting == 4:
             draw_line_under_rect(window, (255, 255, 255), self.menu_text_rect)
+        elif self.currently_selecting == 5:
+            draw_line_under_rect(window, (255, 255, 255), self.back_rect)
 
     def update(self, delta_time: float):
         for event in self.get_events():
@@ -158,21 +167,26 @@ class SettingsMenu(BaseScene):
                 if self.currently_selecting == 1:
                     pass
                 elif self.currently_selecting == 2:
-                    pass
-                    # self.manager.spawn_scene(ResolutionMenu)
+                    pass  # self.manager.spawn_scene(ResolutionMenu)
                 elif self.currently_selecting == 3:
-                    self.manager.spawn_scene(MainMenu)
+                    pass
                 elif self.currently_selecting == 4:
                     webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+                elif self.currently_selecting == 5:
+                    self.manager.spawn_scene(MainMenu)
+
         mouse_pos = pg.mouse.get_pos()
-        if self.fullscreen_rect.collidepoint(mouse_pos):
+
+        if self.music_rect.collidepoint(mouse_pos):
             self.currently_selecting = 1
         elif self.resolution_rect.collidepoint(mouse_pos):
             self.currently_selecting = 2
-        elif self.back_rect.collidepoint(mouse_pos):
+        elif self.credits_rect.collidepoint(mouse_pos):
             self.currently_selecting = 3
         elif self.menu_text_rect.collidepoint(mouse_pos):
             self.currently_selecting = 4
+        elif self.back_rect.collidepoint(mouse_pos):
+            self.currently_selecting = 5
         else:
             self.currently_selecting = 0
 

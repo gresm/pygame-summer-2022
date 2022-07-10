@@ -27,10 +27,15 @@ class SecondTemplate(GUIScene):
 
     def create_locations(self):
         self.create_location("title", (0, 20), "midtop", "midtop")
+        self.create_location("back", (0, 10), "midleft", "midleft")
 
     def setup_widget(self):
         self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 750, self.screen_rect.height - 200)
         self.set_rect_location(self.widgets_rect, (0, 50), "title", "midtop", "midbottom")
+
+        self.create_location("button-1", (0, 50), "midtop", "midtop", self.widgets_rect)
+        self.create_location("button-2", (0, 0), "center", "center", self.widgets_rect)
+        self.create_location("button-3", (0, -50), "midbottom", "midbottom", self.widgets_rect)
 
     def draw(self, window: pg.Surface):
         super().draw(window)

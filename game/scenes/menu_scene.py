@@ -59,6 +59,17 @@ class MusicMenu(SecondTemplate):
         self.create_button("title", "Music", "title", is_title=True)
         self.setup_widget()
 
+        self.create_button("back", "<- Back", "back")
+        self.create_button("bgm-enabled", "BGM: enabled", "button-1")
+        self.create_button("volume", "          ", "button-2")
+        self.create_button("button-3", "Button 3", "button-3")
+
+        self.create_location("volume-title", (0, -30), "center", "center", "volume")
+        self.create_button("volume-title", "Volume:", "volume-title")
+
+        self.create_button("bgm-disabled", "BGM: disabled", "button-1")
+        self.disable_button("bgm-disabled")
+
 
 class DisplayMenu(TemplateGUIScene):
     full_screen: bool

@@ -67,7 +67,7 @@ class MusicMenu(SecondTemplate):
         self.create_button("back", "<- Back", "back")
         self.create_button("bgm-enabled", "BGM: enabled", "button-1")
         self.create_button("volume", "          ", "button-2")
-        self.create_button("button-3", "Button 3", "button-3")
+        self.create_button("button-3", "", "button-3")
 
         self.create_location("volume-title", (0, -30), "center", "center", "volume")
         self.create_button("volume-title", "Volume:", "volume-title")
@@ -79,11 +79,11 @@ class MusicMenu(SecondTemplate):
         if option == "back":
             self.manager.spawn_remove_scene(SettingsMenu)
         elif option == "bgm-enabled":
-            self.manager.mixer.play_background_music = False
+            self.manager.mixer.bgm_enabled = False
             self.toggle_button("bgm-enabled")
             self.toggle_button("bgm-disabled")
         elif option == "bgm-disabled":
-            self.manager.mixer.play_background_music = True
+            self.manager.mixer.bgm_enabled = True
             self.toggle_button("bgm-disabled")
             self.toggle_button("bgm-enabled")
         elif option == "volume":

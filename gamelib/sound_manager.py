@@ -27,6 +27,7 @@ class SoundManager:
         self._background_music_on = False
         self.sounds: dict[str, pg.mixer.Sound] = sounds if sounds is not None else {}
         self.background_music: pg.mixer.Sound | None = None
+        self._bgm_enabled: bool = True
 
     @property
     def global_volume(self):
@@ -39,18 +40,25 @@ class SoundManager:
         self.sfx_channel.set_volume(value)
 
     @property
-    def play_background_music(self):
-        return self._background_music_on
+    def bgm_enabled(self) -> bool:
+        return self._bgm_enabled
 
-    @play_background_music.setter
-    def play_background_music(self, value: bool):
+    @bgm_enabled.setter
+    def bgm_enabled(self, value: bool):
+        self._bgm_enabled = value
         if value:
             self.play_bgm()
         else:
             self.stop_bgm()
-        self._background_music_on = value
+
+    @property
+    def bgm_playing(self) -> bool:
+        return self._background_music_on
 
     def play_bgm(self, bgm: pg.mixer.Sound | None = None):
+        if self.bgm_playing:
+            return
+
         if bgm is None:
             bgm = self.background_music
 
@@ -58,11 +66,16 @@ class SoundManager:
             return
 
         self.background_music = bgm
+
+        if not self.bgm_enabled:
+            return
+
         self.bgm_channel.play(bgm, -1)
         self._background_music_on = True
 
     def stop_bgm(self):
-        self.background_music.stop()
+        print("stopping")
+        self.bgm_channel.stop()
         self._background_music_on = False
 
     def play_sfx(self, sfx: pg.mixer.Sound | str):

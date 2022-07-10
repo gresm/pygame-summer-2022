@@ -4,7 +4,8 @@ import webbrowser
 import pygame as pg
 
 from .quit_scene import QuitScene
-from .template_gui_scene import TemplateGUIScene
+from .template_gui_scene import TemplateGUIScene, SecondTemplate
+from .gui_scene import draw_line_under_rect
 from .credits_scene import CreditsMenu
 
 
@@ -51,8 +52,12 @@ class SettingsMenu(TemplateGUIScene):
             webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
 
 
-class MusicMenu(TemplateGUIScene):
-    pass
+class MusicMenu(SecondTemplate):
+    def after_init(self):
+        super().after_init()
+        self.create_locations()
+        self.create_button("title", "Music", "title", is_title=True)
+        self.setup_widget()
 
 
 class DisplayMenu(TemplateGUIScene):

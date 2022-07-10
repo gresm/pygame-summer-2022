@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from warnings import warn
 import pygame as pg
 from gamelib import BaseScene
 
@@ -14,16 +15,25 @@ class GUIScene(BaseScene):
     widgets: dict[str, tuple[str, int, bool]] = {}
     buttons: dict[str, tuple[pg.Surface, pg.Rect, str]]
     disabled_buttons: dict[str, tuple[pg.Surface, pg.Rect, str]]
-    locations: dict[str, tuple[tuple[int, int], pg.Rect, str, str]]
+    locations: dict[str, tuple[tuple[int, int], pg.Rect | str, str, str]]
     screen_rect: pg.Rect
     selected: str
 
-    @staticmethod
-    def set_rect_location(rect: pg.Rect, location: tuple[tuple[int, int], pg.Rect, str, str]):
-        loc = pg.Vector2(location[0])
-        container = location[1]
-        anchor = location[2]
-        container_anchor = location[3]
+    def set_rect_location(self, rect: pg.Rect,
+                          location: tuple[tuple[int, int], pg.Rect | str, str, str] | tuple[int, int],
+                          container: pg.Rect | str | None = None, anchor: str | None = None,
+                          container_anchor: str | None = None):
+        loc = pg.Vector2(location) if len(location) == 2 else pg.Vector2(location[0])
+        container = container or location[1]
+        anchor = anchor or location[2]
+        container_anchor = container_anchor or location[3]
+
+        if isinstance(container, str):
+            if container in self.buttons:
+                container = self.buttons[container][1]
+            else:
+                warn(f"Container {container} not found")
+                return
 
         container_anchors = {
             "midtop": container.midtop, "midbottom": container.midbottom, "midleft": container.midleft,
@@ -64,7 +74,7 @@ class GUIScene(BaseScene):
 
     def create_location(
             self, name: str, position: tuple[int, int] | pg.Vector2, anchor: str = "topleft", joint: str = "topleft",
-            container: pg.Rect | None = None
+            container: pg.Rect | str | None = None
     ):
         if container is None:
             container = self.screen_rect

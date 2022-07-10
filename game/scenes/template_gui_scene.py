@@ -22,4 +22,20 @@ class TemplateGUIScene(GUIScene):
         pg.draw.rect(surface, (255, 255, 255), self.widgets_rect, 5)
 
 
-__all__ = ["TemplateGUIScene"]
+class SecondTemplate(GUIScene):
+    widgets_rect: pg.Rect
+
+    def create_locations(self):
+        self.create_location("title", (0, 20), "midtop", "midtop")
+
+    def setup_widget(self):
+        self.widgets_rect = pg.Rect(0, 0, self.screen_rect.width - 750, self.screen_rect.height - 200)
+        self.set_rect_location(self.widgets_rect, (0, 50), "title", "midtop", "midbottom")
+
+    def draw(self, window: pg.Surface):
+        super().draw(window)
+
+        pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)
+
+
+__all__ = ["TemplateGUIScene", "SecondTemplate"]

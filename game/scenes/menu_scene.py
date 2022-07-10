@@ -116,7 +116,7 @@ class DisplayMenu(TemplateGUIScene):
         self.create_button("scaled", "Scaled", "button-3")
 
         self.create_button("windowed", "Windowed", "button-1")
-        self.disable_button("bordered")
+        self.disable_button("windowed")
 
         self.create_button("border", "With borders", "button-2")
         self.disable_button("border")

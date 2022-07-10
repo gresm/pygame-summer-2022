@@ -7,9 +7,14 @@ from .quit_scene import QuitScene
 from .template_gui_scene import TemplateGUIScene, SecondTemplate
 from .gui_scene import draw_line_under_rect
 from .credits_scene import CreditsMenu
+from ..assets import sounds
 
 
 class MainMenu(TemplateGUIScene):
+    def init(self):
+        super().init()
+        self.manager.mixer.play_bgm(sounds.sounds["bgm-liquified-death"])
+
     def after_init(self):
         super().after_init()
 
@@ -69,6 +74,22 @@ class MusicMenu(SecondTemplate):
 
         self.create_button("bgm-disabled", "BGM: disabled", "button-1")
         self.disable_button("bgm-disabled")
+
+    def option_selected(self, option: str):
+        if option == "back":
+            self.manager.spawn_remove_scene(SettingsMenu)
+        elif option == "bgm-enabled":
+            self.manager.mixer.play_background_music = False
+            self.toggle_button("bgm-enabled")
+            self.toggle_button("bgm-disabled")
+        elif option == "bgm-disabled":
+            self.manager.mixer.play_background_music = True
+            self.toggle_button("bgm-disabled")
+            self.toggle_button("bgm-enabled")
+        elif option == "volume":
+            pass
+        elif option == "title":
+            pass
 
 
 class DisplayMenu(TemplateGUIScene):

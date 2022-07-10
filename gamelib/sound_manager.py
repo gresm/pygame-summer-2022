@@ -55,15 +55,25 @@ class SoundManager:
     def bgm_playing(self) -> bool:
         return self._background_music_on
 
-    def play_bgm(self, bgm: pg.mixer.Sound | None = None):
+    def play_bgm(self, bgm: pg.mixer.Sound | str | None = None):
         if self.bgm_playing:
-            return
+            if bgm is self.background_music or bgm is None:
+                return
+            elif bgm in self.sounds and self.sounds[bgm] is self.background_music:
+                return
 
         if bgm is None:
             bgm = self.background_music
 
         if bgm is None:
+            warn("No background music set.")
             return
+
+        if isinstance(bgm, str):
+            if bgm not in self.sounds:
+                warn(f"Sound \"{bgm}\" not found in sounds dict.")
+                return
+            bgm = self.sounds[bgm]
 
         self.background_music = bgm
 

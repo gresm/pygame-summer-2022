@@ -5,7 +5,6 @@ import pygame as pg
 
 from .quit_scene import QuitScene
 from .template_gui_scene import TemplateGUIScene, SecondTemplate
-from .gui_scene import draw_line_under_rect
 from .credits_scene import CreditsMenu
 
 
@@ -57,6 +56,13 @@ class SettingsMenu(TemplateGUIScene):
 
 
 class MusicMenu(SecondTemplate):
+    volume_rect: pg.Rect
+    volume_rect_range: tuple[int, int]
+
+    def init(self):
+        super().init()
+        self.volume_rect = pg.Rect(0, 0, 20, 20)
+
     def after_init(self):
         super().after_init()
         self.create_locations()
@@ -74,6 +80,21 @@ class MusicMenu(SecondTemplate):
         self.create_button("bgm-disabled", "BGM: disabled", "button-1")
         self.disable_button("bgm-disabled")
 
+        self.set_rect_location(self.volume_rect, (0, 0), "volume", "midright", "midright")
+        self.volume_rect_range = (
+            self.buttons["volume"][1].left, self.buttons["volume"][1].right - self.volume_rect.width
+        )
+
+    def lock_volume_rect_in_range(self):
+        self.volume_rect.left = min(max(self.volume_rect.left, self.volume_rect_range[0]), self.volume_rect_range[1])
+        self.manager.mixer.global_volume = (self.volume_rect.left - self.volume_rect_range[0]) / (
+            self.volume_rect_range[1] - self.volume_rect_range[0]
+        )
+
+    def draw(self, window: pg.Surface):
+        super().draw(window)
+        pg.draw.rect(window, (255, 255, 255), self.volume_rect, 3)
+
     def option_selected(self, option: str):
         if option == "back":
             self.manager.spawn_remove_scene(SettingsMenu)
@@ -85,12 +106,16 @@ class MusicMenu(SecondTemplate):
             self.manager.mixer.bgm_enabled = True
             self.toggle_button("bgm-disabled")
             self.toggle_button("bgm-enabled")
-        elif option == "volume":
-            pass
         elif option == "test-audio":
             self.manager.mixer.play_sfx("menu-blip")
         elif option == "title":
             pass
+
+    def update(self, dt: float):
+        super().update(dt)
+        if pg.mouse.get_pressed()[0] and self.selected == "volume":
+            self.volume_rect.centerx = pg.mouse.get_pos()[0]
+            self.lock_volume_rect_in_range()
 
 
 class DisplayMenu(TemplateGUIScene):

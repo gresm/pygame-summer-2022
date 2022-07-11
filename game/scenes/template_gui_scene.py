@@ -31,11 +31,13 @@ class SecondTemplate(GUIScene):
     widgets_rect: pg.Rect
     changing_bg: bool
     color_iter: Callable[[], tuple[int, int, int]]
+    bg_color: tuple[int, int, int]
 
     def init(self):
         super().init()
         self.changing_bg = True
         self.color_iter = color_iter()
+        self.bg_color = self.color_iter()
 
     def create_locations(self):
         self.create_location("title", (0, 20), "midtop", "midtop")
@@ -50,7 +52,10 @@ class SecondTemplate(GUIScene):
         self.create_location("button-3", (0, -50), "midbottom", "midbottom", self.widgets_rect)
 
     def draw(self, window: pg.Surface):
-        window.fill(self.color_iter())
+        window.fill(self.bg_color)
+        if self.changing_bg:
+            self.bg_color = self.color_iter()
+
         super().draw(window)
 
         pg.draw.rect(window, (255, 255, 255), self.widgets_rect, 5)

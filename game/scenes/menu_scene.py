@@ -109,7 +109,7 @@ class MusicMenu(SecondTemplate):
         elif option == "test-audio":
             self.manager.mixer.play_sfx("menu-blip")
         elif option == "title":
-            pass
+            self.changing_bg = not self.changing_bg
 
     def update(self, dt: float):
         super().update(dt)

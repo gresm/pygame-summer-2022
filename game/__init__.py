@@ -10,7 +10,7 @@ pg.init()
 
 game = get_game((constants.WIDTH, constants.HEIGHT), constants.MAX_FPS)
 
-mixer = SoundManager(sounds.sounds)
+mixer = SoundManager(sounds.sounds, 0, 1)
 scene_manager.init(game, mixer)
 scene_manager.spawn_scene(MainMenu)
 

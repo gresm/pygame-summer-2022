@@ -5,21 +5,18 @@ from warnings import warn
 import pygame as pg
 
 
-ChannelClass = type(pg.mixer.Channel(0))
-
-
 class SoundManager:
     def __init__(
             self, sounds: dict[str, pg.mixer.Sound] | None = None, bgm_channel: int | pg.mixer.Channel | None = None,
             sfx_channel: int | pg.mixer.Channel | None = None
     ):
         if bgm_channel is None:
-            bgm_channel = pg.mixer.find_channel(True)
+            bgm_channel = pg.mixer.find_channel()
         if sfx_channel is None:
-            sfx_channel = pg.mixer.find_channel(False)
+            sfx_channel = pg.mixer.find_channel()
 
-        self.bgm_channel = bgm_channel if isinstance(bgm_channel, ChannelClass) else pg.mixer.Channel(bgm_channel)
-        self.sfx_channel = sfx_channel if isinstance(sfx_channel, ChannelClass) else pg.mixer.Channel(sfx_channel)
+        self.bgm_channel = pg.mixer.Channel(bgm_channel) if isinstance(bgm_channel, int) else bgm_channel
+        self.sfx_channel = pg.mixer.Channel(sfx_channel) if isinstance(sfx_channel, int) else sfx_channel
         self._global_volume = 1.0
         self.bgm_channel.set_volume(self.global_volume)
         self.sfx_channel.set_volume(self.global_volume)
@@ -84,7 +81,6 @@ class SoundManager:
         self._background_music_on = True
 
     def stop_bgm(self):
-        print("stopping")
         self.bgm_channel.stop()
         self._background_music_on = False
 
@@ -95,7 +91,7 @@ class SoundManager:
             sfx = self.sounds[sfx]
         self.sfx_channel.play(sfx)
 
-    def add_sfx(self, name: str, sound: pg.mixer.Sound):
+    def add_sound(self, name: str, sound: pg.mixer.Sound):
         self.sounds[name] = sound
 
 

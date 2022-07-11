@@ -88,6 +88,11 @@ class WFCAbstract(ABC):
                 if not self.reduce_tile(current_tile):
                     move.all_false()
 
+    def set_tile(self, pos: tuple[int, int], superpositions: set[int]):
+        if self.board.tile_at(pos[0], pos[1]):
+            self.board.tile_at(pos[0], pos[1]).tile.superpositions = superpositions.copy()
+            self.wave_tile(self.board.tile_at(pos[0], pos[1]))
+
     def step(self):
         """
         Perform one step of wave-function collapse.

@@ -6,7 +6,7 @@ import pygame as pg
 from .quit_scene import QuitScene
 from .template_gui_scene import TemplateGUIScene, SecondTemplate
 from .credits_scene import CreditsMenu
-from .play_scene import PlayScene
+from .game_scene import GameScene
 
 
 class MainMenu(TemplateGUIScene):
@@ -24,7 +24,7 @@ class MainMenu(TemplateGUIScene):
 
     def option_selected(self, option: str):
         if option == "new-game":
-            self.manager.spawn_scene(PlayScene)
+            self.manager.spawn_scene(GameScene)
         elif option == "setting":
             self.manager.spawn_remove_scene(SettingsMenu)
         elif option == "quit":

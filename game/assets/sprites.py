@@ -11,12 +11,12 @@ class _Positioned(pg.sprite.Sprite):
     def __init__(self, pos: pg.Vector2 | None = None):
         super().__init__()
         self._refresh_rect = True
-        self._pos = pos if pos else pg.Vector2()
+        self._pos = pos if pos is not None else pg.Vector2()
         self._rect = self.rect
 
     @property
     def pos(self):
-        return self.pos
+        return self._pos
 
     @pos.setter
     def pos(self, value: pg.Vector2):

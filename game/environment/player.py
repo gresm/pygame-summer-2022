@@ -10,7 +10,7 @@ class Player:
         self.sprite = sprite
         self.pos = pos
         self.old_pos = self.pos.copy()
-        self.gravity = pg.Vector2(0, -0.5)
+        self.gravity = pg.Vector2(0, 10)
 
     @property
     def pos(self) -> pg.Vector2:
@@ -26,7 +26,12 @@ class Player:
         self.old_pos = old_pos
 
     def update(self, dt: float):
+        self.flip_pos()
         self.pos = self.pos + (self.gravity * dt)
+        self.sprite.step_by(int(dt))
 
     def draw(self, screen: pg.Surface):
         screen.blit(self.sprite.image, self.sprite.rect)
+
+
+__all__ = ["Player"]

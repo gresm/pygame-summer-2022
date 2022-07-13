@@ -29,7 +29,8 @@ sprite_sheet.json format is as follows:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TypedDict, Union
+from copy import deepcopy
+from typing import TypedDict, Union, Type
 import json
 import pygame as pg
 
@@ -101,7 +102,14 @@ class SpriteData:
         return self.animations[self._current]
 
     @property
-    def image(self) -> ImageData:
+    def image(self) -> pg.Surface:
+        return self.current_image().image
+
+    @property
+    def hit_box(self) -> pg.Rect:
+        return self.current_image().hit_box
+
+    def current_image(self) -> ImageData:
         return self.current_animation.current_image
 
     def step_by(self, inc: int):
@@ -142,19 +150,24 @@ class SpriteSheet:
     def create_tile(cls, source: pg.Surface, data: _Image):
         return TileData.deserialize(source, data)
 
+    def get_tile(self, tile: str):
+        return deepcopy(self.tiles[tile])
 
-def load_sprite_sheet(name: str) -> SpriteSheet:
+    def get_sprite(self, sprite: str):
+        return deepcopy(self.sprites[sprite])
+
+
+def load_sprite_sheet(name: str, sheet_type: Type[SpriteSheet] | None = None) -> SpriteSheet:
     """
     Load a sprite sheet from the asset's folder
-    :param name:
-    :return:
     """
+    sheet_type = sheet_type if sheet_type else SpriteSheet
     image = sprite_sheet_folder / f"{name}.png"
     config = sprite_sheet_folder / f"{name}.json"
 
     with config.open("r") as config_file:
         data = json.load(config_file)
-    return SpriteSheet.deserialize(pg.image.load(str(image)), data)
+    return sheet_type.deserialize(pg.image.load(str(image)), data)
 
 
 def load_grid_map(name: str, tile_width: int, tile_height: int) -> list[list[pg.Surface]]:
@@ -172,4 +185,7 @@ def load_grid_map(name: str, tile_width: int, tile_height: int) -> list[list[pg.
     return ret
 
 
-__all__ = ["load_sprite_sheet", "load_grid_map", "SpriteSheet", "SpriteData", "TileData", "SheetStruct", "Animation"]
+__all__ = [
+    "load_sprite_sheet", "load_grid_map", "SpriteSheet", "SpriteData", "TileData", "SheetStruct", "Animation",
+    "ImageData"
+]

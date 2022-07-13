@@ -40,8 +40,8 @@ class Player:
         self.pos = self.pos + (self.gravity * dt)
         self.sprite.step_by(int(dt))
 
-    def draw(self, screen: pg.Surface):
-        screen.blit(self.sprite.image, self.sprite.rect)
+    def draw(self, screen: pg.Surface, camera: pg.Vector2 | None = None):
+        self.sprite.draw(screen, camera)
 
     def resolve_collision(self, other: pg.Rect) -> tuple[bool, int]:
         if not self.rect.colliderect(other):

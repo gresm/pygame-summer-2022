@@ -38,6 +38,12 @@ class _Positioned(pg.sprite.Sprite):
         self.pos = value.topleft
         self._refresh_rect = True
 
+    def draw(self, screen: pg.Surface, camera: pg.Vector2 | None = None):
+        if camera is None:
+            screen.blit(self.image, self.rect)
+        else:
+            screen.blit(self.image, pg.Vector2(self.rect.topleft) - camera)
+
 
 class Sprite(_SpriteData, _Positioned):
     def __init__(self, current: str, animations: dict[str, _Animation], pos: pg.Vector2 | None = None):

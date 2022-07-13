@@ -1,5 +1,6 @@
 import pygame as pg
 
 
-class Player(pg.sprite.Sprite):
-    pass
+class Player:
+    def __init__(self):
+        pass

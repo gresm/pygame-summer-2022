@@ -172,4 +172,4 @@ def load_grid_map(name: str, tile_width: int, tile_height: int) -> list[list[pg.
     return ret
 
 
-__all__ = ["load_sprite_sheet", "load_grid_map", "SpriteSheet", "SpriteData", "TileData", "SheetStruct"]
+__all__ = ["load_sprite_sheet", "load_grid_map", "SpriteSheet", "SpriteData", "TileData", "SheetStruct", "Animation"]

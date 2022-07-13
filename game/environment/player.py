@@ -43,6 +43,9 @@ class Player:
     def draw(self, screen: pg.Surface, camera: pg.Vector2 | None = None):
         self.sprite.draw(screen, camera)
 
+    def stop(self):
+        self.old_pos = self.pos.copy()
+
     def resolve_collision(self, other: pg.Rect) -> tuple[bool, int]:
         if not self.rect.colliderect(other):
             return False, -1

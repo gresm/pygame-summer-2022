@@ -40,7 +40,7 @@ class _Positioned(pg.sprite.Sprite):
 
     def draw(self, screen: pg.Surface, camera: pg.Vector2 | None = None):
         if camera is None:
-            screen.blit(self.image, self.rect)
+            screen.blit(self.image, self.rect.topleft)
         else:
             screen.blit(self.image, pg.Vector2(self.rect.topleft) - camera)
 

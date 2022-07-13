@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pygame as pg
 from ..assets.sprites import Sprite
 
@@ -20,6 +22,14 @@ class Player:
     def pos(self, value: pg.Vector2):
         self.sprite.pos = value
 
+    @property
+    def rect(self):
+        return self.sprite.rect
+
+    @rect.setter
+    def rect(self, value: pg.Rect):
+        self.sprite.rect = value
+
     def flip_pos(self):
         old_pos = self.pos.copy()
         self.pos = self.pos + (self.pos - self.old_pos)
@@ -32,6 +42,26 @@ class Player:
 
     def draw(self, screen: pg.Surface):
         screen.blit(self.sprite.image, self.sprite.rect)
+
+    def resolve_collision(self, other: pg.Rect) -> tuple[bool, int]:
+        if not self.rect.colliderect(other):
+            return False, -1
+
+        left_fix = other.left - self.rect.right + 1
+        right_fix = self.rect.left - other.right - 1
+        top_fix = other.top - self.rect.bottom + 1
+        bottom_fix = self.rect.top - other.bottom - 1
+        fix = min((left_fix, 0), (top_fix, 1), (right_fix, 2), (bottom_fix, 3), key=lambda x: abs(x[0]))
+        if fix[1] == 0:
+            self.pos.x += fix[0]
+        elif fix[1] == 1:
+            self.pos.y += fix[0]
+        elif fix[1] == 2:
+            self.pos.x -= fix[0]
+        elif fix[1] == 3:
+            self.pos.y -= fix[0]
+
+        return True, fix[1]
 
 
 __all__ = ["Player"]

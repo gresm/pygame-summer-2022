@@ -29,8 +29,14 @@ class _Positioned(pg.sprite.Sprite):
             self._refresh_rect = False
             rect = self.hit_box.copy()
             rect.topleft = self.pos + pg.Vector2(self.hit_box.topleft)
+            self._rect = rect
             return rect
         return self._rect
+
+    @rect.setter
+    def rect(self, value: pg.Rect):
+        self.pos = value.topleft
+        self._refresh_rect = True
 
 
 class Sprite(_SpriteData, _Positioned):

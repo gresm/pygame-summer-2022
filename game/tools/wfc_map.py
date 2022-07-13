@@ -60,10 +60,11 @@ class MapChunk(MapTileAccess, ABC):
                  default_value: wfc.SuperpositionTile):
         self.game_map = game_map
         self.chunk = chunk
-        self.width = width
-        self.height = height
+        self.width = width + 1
+        self.height = height + 1
         self.default_value = default_value
         self.board = self._create_board()
+        self.map_rect = pg.Rect(0, 0, width, height)
         self._collapse = self._create_collapse(self.board)
 
         self.reload_border()

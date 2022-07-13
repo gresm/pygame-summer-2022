@@ -6,16 +6,23 @@ sprite_sheet.json format is as follows:
 {
     "sprites": {
         "name": {
-            "hit-box": [x, y, size_x, size_y],
-            "frames": {
+            "default": default_animation
+            "animations": {
                 "state": {
-                    "frame": [x, y, size_x, size_y]
-                },
+                    "frames": [{
+                        "image": [x, y, size_x, size_y],
+                        "hit-box": [x, y, size_x, size_y]
+                    }, ...],
+                "speed": speed
+                }, ...
             }
-        }
+        }, ...
     },
     "tiles": {
-        "name": [x, y, size_x, size_y]
+        "name": {
+            "image": [x, y, size_x, size_y],
+            "hit-box": [x, y, size_x, size_y]
+        }, ...
     }
 }
 """
@@ -29,13 +36,50 @@ import pygame as pg
 sprite_sheet_folder = Path(__file__).parent / "sprite-sheet"
 
 _RectLike = Union[tuple[int, int, int, int], list[int]]
-_SheetData = TypedDict("_SheetData", {"hit-box": _RectLike, "frames": list[_RectLike]})
-SheetStruct = TypedDict("SheetStruct", {"sprites": dict[str, _SheetData], "tiles": dict[str, _RectLike]})
+
+_ImageWithHitBox = TypedDict("_ImageWithHitBox", {"image": _RectLike, "hit-box": _RectLike})
+_ImageWithoutHitBox = TypedDict("_ImageWithoutHitBox", {"image": _RectLike})
+_Image = Union[_ImageWithHitBox, _ImageWithoutHitBox]
+_AnimationFrames = list[_Image]
+_Animation = TypedDict("_Animation", {"frames": _AnimationFrames, "speed": int})
+_Sprite = TypedDict("_Sprite", {"default": str, "animations": dict[str, _Animation]})
+_Tiles = dict[str, _Image]
+SheetStruct = TypedDict("SheetStruct", {"sprites": _Sprite, "tiles": _Tiles})
 
 
-class Sprite:
-    def __init__(self, ):
-        pass
+class ImageData:
+    def __init__(self, image: pg.Surface, hit_box: pg.Rect):
+        self.image = image
+        self.hit_box = hit_box
+
+    @classmethod
+    def deserialize(cls, source: pg.Surface, data: _Image) -> ImageData:
+        img = source.subsurface(data["image"])
+        if "hit-box" in data:
+            hit_box = pg.Rect(data["hit-box"])
+        else:
+            hit_box = img.get_bounding_rect()
+
+        return cls(img, hit_box)
+
+
+class Animation:
+    def __init__(self, frames: list[ImageData], speed: int):
+        self.frames = frames
+        self.speed = speed
+        self.current = 0
+
+    @classmethod
+    def deserialize(cls, source: pg.Surface, data: _Animation) -> Animation:
+        frames = [ImageData.deserialize(source, frame) for frame in data["frames"]]
+        return cls(frames, data["speed"])
+
+    @property
+    def current_image(self) -> ImageData:
+        return self.frames[self.current]
+
+    def next(self):
+        self.current = (self.current + 1) % len(self.frames)
 
 
 class SpriteSheet:

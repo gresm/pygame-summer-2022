@@ -157,4 +157,19 @@ def load_sprite_sheet(name: str) -> SpriteSheet:
     return SpriteSheet.deserialize(pg.image.load(str(image)), data)
 
 
-__all__ = ["load_sprite_sheet"]
+def load_grid_map(name: str, tile_width: int, tile_height: int) -> list[list[pg.Surface]]:
+    """
+    Load a grid map from the asset's folder
+    """
+    image_file = sprite_sheet_folder / f"{name}.png"
+    image = pg.image.load(str(image_file))
+    ret = []
+
+    for x in range(0, image.get_width(), tile_width):
+        ret.append([])
+        for y in range(0, image.get_height(), tile_height):
+            ret[-1].append(image.subsurface(pg.Rect(x, y, tile_width, tile_height)))
+    return ret
+
+
+__all__ = ["load_sprite_sheet", "load_grid_map"]

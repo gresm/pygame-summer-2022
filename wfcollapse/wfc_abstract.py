@@ -115,3 +115,11 @@ class WFCAbstract(ABC):
             if not step:
                 break
             yield step
+
+    def collapse(self):
+        """
+        Collapse the board.
+        """
+        for step in self.solve():
+            for _ in step:
+                pass

@@ -44,7 +44,7 @@ _AnimationFrames = list[_Image]
 _Animation = TypedDict("_Animation", {"frames": _AnimationFrames, "speed": int})
 _Sprite = TypedDict("_Sprite", {"default": str, "animations": dict[str, _Animation]})
 _Tiles = dict[str, _Image]
-SheetStruct = TypedDict("SheetStruct", {"sprites": _Sprite, "tiles": _Tiles})
+SheetStruct = TypedDict("SheetStruct", {"sprites": dict[str, _Sprite], "tiles": _Tiles})
 
 
 class ImageData:
@@ -78,14 +78,61 @@ class Animation:
     def current_image(self) -> ImageData:
         return self.frames[self.current]
 
-    def next(self):
-        self.current = (self.current + 1) % len(self.frames)
+    def step_by(self, inc: int):
+        self.current = (self.current + inc) % len(self.frames)
+
+
+class SpriteData:
+    def __init__(self, current: str, animations: dict[str, Animation]):
+        self._current = current
+        self.animations = animations
+        self.anim_cnt = 0
+
+    @classmethod
+    def deserialize(cls, source: pg.Surface, data: _Sprite) -> SpriteData:
+        animations = {
+            name: Animation.deserialize(source, anim)
+            for name, anim in data["animations"].items()
+        }
+        return cls(data["default"], animations)
+
+    @property
+    def current_animation(self) -> Animation:
+        return self.animations[self._current]
+
+    @property
+    def image(self) -> ImageData:
+        return self.current_animation.current_image
+
+    def step_by(self, inc: int):
+        self.anim_cnt += inc
+        fixed = self.anim_cnt % self.current_animation.speed
+        steps = (self.anim_cnt - fixed) // self.current_animation.speed
+        self.anim_cnt = fixed
+        self.current_animation.step_by(steps)
+
+
+class TileData(ImageData):
+    pass
 
 
 class SpriteSheet:
-    def __init__(self, image: pg.Surface, data: SheetStruct):
+    def __init__(self, image: pg.Surface, sprites: dict[str, SpriteData], tiles: dict[str, TileData]):
         self.image = image
-        self.data = data
+        self.sprites = sprites
+        self.tiles = tiles
+
+    @classmethod
+    def deserialize(cls, source: pg.Surface, data: SheetStruct) -> SpriteSheet:
+        sprites = {
+            name: SpriteData.deserialize(source, sprite)
+            for name, sprite in data["sprites"].items()
+        }
+        tiles = {
+            name: TileData.deserialize(source, tile)
+            for name, tile in data["tiles"].items()
+        }
+        return cls(source, sprites, tiles)
 
 
 def load_sprite_sheet(name: str) -> SpriteSheet:
@@ -99,7 +146,7 @@ def load_sprite_sheet(name: str) -> SpriteSheet:
 
     with config.open("r") as config_file:
         data = json.load(config_file)
-    return SpriteSheet(pg.image.load(str(image)), data)
+    return SpriteSheet.deserialize(pg.image.load(str(image)), data)
 
 
 __all__ = ["load_sprite_sheet"]

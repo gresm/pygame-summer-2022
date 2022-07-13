@@ -125,14 +125,22 @@ class SpriteSheet:
     @classmethod
     def deserialize(cls, source: pg.Surface, data: SheetStruct) -> SpriteSheet:
         sprites = {
-            name: SpriteData.deserialize(source, sprite)
+            name: cls.create_sprite(source, data["sprites"][name])
             for name, sprite in data["sprites"].items()
         }
         tiles = {
-            name: TileData.deserialize(source, tile)
+            name: cls.create_tile(source, tile)
             for name, tile in data["tiles"].items()
         }
         return cls(source, sprites, tiles)
+
+    @classmethod
+    def create_sprite(cls, source: pg.Surface, data: _Sprite):
+        return SpriteData.deserialize(source, data)
+
+    @classmethod
+    def create_tile(cls, source: pg.Surface, data: _Image):
+        return TileData.deserialize(source, data)
 
 
 def load_sprite_sheet(name: str) -> SpriteSheet:
